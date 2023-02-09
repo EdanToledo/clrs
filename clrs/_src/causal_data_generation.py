@@ -16,7 +16,10 @@ import networkx as nx
 # Currently hardcoding the rng
 _rng = np.random.RandomState(42)
 
-def visualise_graph(adjacency_matrix, weighted_matrix):
+
+def visualise_graph(adjacency_matrix, weighted_matrix, node_labels=None):
+    node_list = np.arange(len(adjacency_matrix)).tolist()
+    
     rows, cols = np.where(adjacency_matrix == 1)
     edges = zip(
         rows.tolist(), cols.tolist(), np.round(weighted_matrix[rows, cols], 3).tolist()
@@ -27,12 +30,19 @@ def visualise_graph(adjacency_matrix, weighted_matrix):
     nx.draw(
         gr,
         pos,
-        node_size=500,
-        nodelist=np.arange(len(adjacency_matrix)).tolist(),
-        with_labels=True,
+        node_size=550,
+        nodelist=node_list,
+        with_labels=False,
     )
     edge_labels = nx.get_edge_attributes(gr, "weight")
     nx.draw_networkx_edge_labels(gr, pos, edge_labels)
+    if node_labels:
+        labels = {}
+        for node in node_list:
+            labels[node] = node_labels[node]
+    
+        nx.draw_networkx_labels(gr, pos, labels, font_size=6, font_color="black")
+
     plt.show()
 
 
@@ -61,17 +71,21 @@ def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0):
 
     # For every exogenous node - set its initial values - currently this needs to change - not sure what to put here
     for exo_node in exogenous_nodes:
-        node_data[exo_node] = np.random.randint(0, 100, size=(data_points,))
+        node_data[exo_node] = _rng.randint(0, 100, size=(data_points,))
 
     # For every endogenous node - run the calculations through the
     # DAG - currently uses the weights of the DAG to represent the
-    # functional relationship and simply performing linear calculations like an MLP - can change
+    # functional relationship and simply performing linear calculations.
+    # Node values join together either by sum or product which is chosen by random.
+    operations = [np.sum, np.prod]
     for endo_node in endogenous_nodes:
         parent_nodes = np.where(adjacency_mat[:, endo_node] == 1)
         endo_node_value = node_data[parent_nodes] * np.expand_dims(
             np.squeeze(weighted_mat[parent_nodes, endo_node]), -1
         )
-        endo_node_value = np.sum(endo_node_value, axis=0)
+        op_index = _rng.choice(len(operations))
+        op = operations[op_index]
+        endo_node_value = op(endo_node_value, axis=0)
         node_data[endo_node] = endo_node_value
 
     return adjacency_mat, weighted_mat, exogenous_nodes, endogenous_nodes, node_data
@@ -83,19 +97,17 @@ def test_causal_data_generation(nb_nodes, low=0.0, high=1.0, p=(0.5,)):
         weighted_mat,
         exogenous_nodes,
         endogenous_nodes,
+        node_data,
     ) = _random_causal_graph(
         nb_nodes=nb_nodes,
         p=_rng.choice(p),
-        directed=True,
-        acyclic=True,
-        weighted=True,
         low=low,
         high=high,
     )
 
-    visualise_graph(adjacency_mat, weighted_mat)
+    visualise_graph(adjacency_mat, weighted_mat, node_labels = np.round(np.squeeze(node_data),2).tolist())
 
-
+    
 
 if __name__ == "__main__":
     test_causal_data_generation(5, 5)
