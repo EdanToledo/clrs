@@ -16,12 +16,13 @@ import networkx as nx
 # Currently hardcoding the rng
 _rng = np.random.RandomState(123456)
 
+
 def create_nx_graph(adjacency_matrix, weighted_matrix):
     """Create a networkx digraph.
 
     Args:
         adjacency_matrix (np.ndarray): The adjacency matrix of the graph.
-        weighted_matrix (np.ndarray): The adjacency matrix of the graph 
+        weighted_matrix (np.ndarray): The adjacency matrix of the graph
             except instead of 0s and 1s, we use the weight values of the edges.
 
     Returns:
@@ -35,16 +36,17 @@ def create_nx_graph(adjacency_matrix, weighted_matrix):
     gr.add_weighted_edges_from(edges)
     return gr
 
+
 def visualise_graph(adjacency_matrix, weighted_matrix, node_labels=None):
     """Visualise a directed weighted graph.
 
     Args:
         adjacency_matrix (np.ndarray): The adjacency matrix of the graph.
-        weighted_matrix (np.ndarray): The adjacency matrix of the graph 
+        weighted_matrix (np.ndarray): The adjacency matrix of the graph
             except instead of 0s and 1s, we use the weight values of the edges.
         node_labels (Dict[int, str], optional): Labels to use for the nodes. Defaults to None. If None then the node ids are simply used.
     """
-   
+
     node_list = np.arange(len(adjacency_matrix)).tolist()
 
     gr = create_nx_graph(adjacency_matrix, weighted_matrix)
@@ -63,7 +65,7 @@ def visualise_graph(adjacency_matrix, weighted_matrix, node_labels=None):
         labels = {}
         for node in gr.nodes().keys():
             labels[node] = node_labels[node]
-    
+
         nx.draw_networkx_labels(gr, pos, labels, font_size=6, font_color="black")
 
     plt.show()
@@ -97,11 +99,13 @@ def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0):
         if nx.is_weakly_connected(create_nx_graph(adjacency_mat, weighted_mat)):
             # Then check if any node is left out i.e there in-degree == out-degree == 0
             # Get indices of nodes that have the same in-out-degree
-            indices = np.where(np.sum(adjacency_mat, axis=0) == np.sum(adjacency_mat, axis=1))
+            indices = np.where(
+                np.sum(adjacency_mat, axis=0) == np.sum(adjacency_mat, axis=1)
+            )
             # Check if any of those nodes have their degree == 0
             if not np.any(np.sum(adjacency_mat, axis=0)[indices] == 0):
                 break
-            
+
     # Find node indices that are exogenous variables
     exogenous_nodes = np.where(np.sum(adjacency_mat, axis=0) == 0)
     # Find node indices that are endogenous variables
@@ -122,19 +126,23 @@ def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0):
     # functional relationship and simply performing linear calculations.
     # Node values join together either by sum or product which is chosen by random.
     operations = [np.sum, np.prod]
-    
+
     # Recursively set all node values
     def set_value(adjacency_matrix, weighted_matrix, endo_node, node_data):
         if np.all(node_data[endo_node] != 0):
             return node_data
 
         parent_nodes = np.where(adjacency_mat[:, endo_node] == 1)
-        if len(parent_nodes[0])>0:
+        if len(parent_nodes[0]) > 0:
             parent_nodes_values = node_data[parent_nodes]
-            parent_node_fill_indices = parent_nodes[0][np.where(parent_nodes_values == 0)[0]]
+            parent_node_fill_indices = parent_nodes[0][
+                np.where(parent_nodes_values == 0)[0]
+            ]
             for parent_node_id in parent_node_fill_indices:
-                node_data = set_value(adjacency_matrix, weighted_matrix, parent_node_id, node_data)
-        
+                node_data = set_value(
+                    adjacency_matrix, weighted_matrix, parent_node_id, node_data
+                )
+
             endo_node_value = node_data[parent_nodes] * np.expand_dims(
                 np.squeeze(weighted_matrix[parent_nodes, endo_node]), -1
             )
@@ -147,7 +155,6 @@ def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0):
 
     for endo_node in endogenous_nodes:
         node_data = set_value(adjacency_mat, weighted_mat, endo_node, node_data)
-
 
     return adjacency_mat, weighted_mat, exogenous_nodes, endogenous_nodes, node_data
 
@@ -166,9 +173,12 @@ def test_causal_data_generation(nb_nodes, low=0.0, high=1.0, p=(0.5,)):
         high=high,
     )
 
-    visualise_graph(adjacency_mat, weighted_mat, node_labels = np.round(np.squeeze(node_data),2).tolist())
+    visualise_graph(
+        adjacency_mat,
+        weighted_mat,
+        node_labels=np.round(np.squeeze(node_data), 2).tolist(),
+    )
 
-    
 
 if __name__ == "__main__":
     test_causal_data_generation(5, 5)
