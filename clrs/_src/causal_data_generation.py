@@ -1,20 +1,14 @@
-"""Unit tests for `all add causal functions`."""
-
-from absl.testing import absltest
-from absl.testing import parameterized
-
-import chex
-from clrs._src import probing
-from clrs._src import samplers
-from clrs._src import specs
-import jax
 import numpy as np
 
 import matplotlib.pyplot as plt
+from causalgraphicalmodels import CausalGraphicalModel
+from causalgraphicalmodels import StructuralCausalModel
 import networkx as nx
+import seaborn as sns
+
 
 # Currently hardcoding the rng
-_rng = np.random.RandomState(123456)
+_rng = np.random.RandomState(5)
 
 
 def create_nx_graph(adjacency_matrix, weighted_matrix):
@@ -71,7 +65,7 @@ def visualise_graph(adjacency_matrix, weighted_matrix, node_labels=None):
     plt.show()
 
 
-def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0):
+def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0, noise=0.1, binomial_exogenous_variables = True, binomial_probability = 0.6):
     """_summary_
 
     Args:
@@ -106,79 +100,77 @@ def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0):
             if not np.any(np.sum(adjacency_mat, axis=0)[indices] == 0):
                 break
 
-    # Find node indices that are exogenous variables
+    # Find node indices that are exogenous variables - no incoming connections
     exogenous_nodes = np.where(np.sum(adjacency_mat, axis=0) == 0)
-    # Find node indices that are endogenous variables
+    # Find node indices that are endogenous variables - have incoming connections
     endogenous_nodes = np.delete(np.arange(nb_nodes), exogenous_nodes)
 
-    # Choose the number of data points - I believe this will be one in the way clrs works but could be wrong - coded generally
-    data_points = 1
+    parent_nodes = [
+        np.where(adjacency_mat[:, endo_node] == 1)[0] for endo_node in endogenous_nodes
+    ]
 
-    # Create the initial data that occupies each node space
-    node_data = np.zeros((nb_nodes, data_points))
+    def convert_to_function_sig(parent_nodes):
+        function_sig = []
+        for parents in parent_nodes:
+            var = ""
+            for parent in parents:
+                var += f"x{parent},"
+            function_sig.append(var)
 
-    # For every exogenous node - set its initial values - currently this needs to change - not sure what to put here
-    for exo_node in exogenous_nodes:
-        node_data[exo_node] = _rng.randint(1, 2, size=(data_points,))
+        return function_sig
 
-    # For every endogenous node - run the calculations through the
-    # DAG - currently uses the weights of the DAG to represent the
-    # functional relationship and simply performing linear calculations.
-    # Node values join together either by sum or product which is chosen by random.
-    operations = [np.sum, np.prod]
+    def convert_to_causal_relation(parent_nodes, endogenous_nodes):
+        math_funs = []
+        for endo_node, parents in zip(endogenous_nodes, parent_nodes):
+            terms = []
+            for parent in parents:
+                term = f"{weighted_mat[parent, endo_node]}*x{parent}"
+                terms.append(term)
 
-    # Recursively set all node values
-    def set_value(adjacency_matrix, weighted_matrix, endo_node, node_data):
-        if np.all(node_data[endo_node] != 0):
-            return node_data
+            math_funs.append("+".join(terms))
 
-        parent_nodes = np.where(adjacency_mat[:, endo_node] == 1)
-        if len(parent_nodes[0]) > 0:
-            parent_nodes_values = node_data[parent_nodes]
-            parent_node_fill_indices = parent_nodes[0][
-                np.where(parent_nodes_values == 0)[0]
-            ]
-            for parent_node_id in parent_node_fill_indices:
-                node_data = set_value(
-                    adjacency_matrix, weighted_matrix, parent_node_id, node_data
-                )
+        return math_funs
 
-            endo_node_value = node_data[parent_nodes] * np.expand_dims(
-                np.squeeze(weighted_matrix[parent_nodes, endo_node]), -1
-            )
-            op_index = _rng.choice(len(operations))
-            op = operations[op_index]
-            endo_node_value = op(endo_node_value, axis=0)
-            node_data[endo_node] = endo_node_value
+    function_signatures = convert_to_function_sig(parent_nodes)
+    math_funs = convert_to_causal_relation(parent_nodes, endogenous_nodes)
 
-        return node_data
+    exogenous_nodes_scm = {
+        f"x{i}": lambda n_samples: np.random.binomial(n=1, p=binomial_probability, size=n_samples) if binomial_exogenous_variables else np.random.uniform(low, high, size=n_samples)
+        for i in exogenous_nodes[0]
+    }
 
-    for endo_node in endogenous_nodes:
-        node_data = set_value(adjacency_mat, weighted_mat, endo_node, node_data)
+    endogenous_nodes_scm = {
+        f"x{endogenous_nodes[i]}": eval(
+            f"lambda {function_signatures[i]} n_samples : np.random.normal(loc={math_funs[i]}, scale={noise})"
+        )
+        for i in range(len(endogenous_nodes))
+    }
 
-    return adjacency_mat, weighted_mat, exogenous_nodes, endogenous_nodes, node_data
+    scm = StructuralCausalModel({**exogenous_nodes_scm, **endogenous_nodes_scm})
+
+    return adjacency_mat, weighted_mat, exogenous_nodes, endogenous_nodes, scm
 
 
-def test_causal_data_generation(nb_nodes, low=0.0, high=1.0, p=(0.5,)):
+def test_causal_data_generation(nb_nodes, low=0.0, high=1.0, p=[0.1, 0.2, 0.3, 0.5]):
     (
         adjacency_mat,
         weighted_mat,
         exogenous_nodes,
         endogenous_nodes,
-        node_data,
+        scm,
     ) = _random_causal_graph(
         nb_nodes=nb_nodes,
         p=_rng.choice(p),
         low=low,
         high=high,
+        binomial_exogenous_variables=False,
+        binomial_probability=0.6
     )
 
-    visualise_graph(
-        adjacency_mat,
-        weighted_mat,
-        node_labels=np.round(np.squeeze(node_data), 2).tolist(),
-    )
+    ds = scm.sample(100)
+    print(ds.head())
+    scm.cgm.draw().view()
 
 
 if __name__ == "__main__":
-    test_causal_data_generation(5, 5)
+    test_causal_data_generation(10)
