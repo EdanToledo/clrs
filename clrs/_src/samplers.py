@@ -29,6 +29,8 @@ from clrs._src import specs
 import jax
 import numpy as np
 
+from clrs._src.causal_data_generation import _random_causal_graph
+
 
 _Array = np.ndarray
 _DataPoint = probing.DataPoint
@@ -629,6 +631,40 @@ class ConvexHullSampler(Sampler):
     ys = rs * np.sin(thetas) + origin_y
 
     return [xs, ys]
+  
+
+class CausalDataSampler(Sampler):
+  """Sampler for Synthetic Causal Data"""
+
+  def _sample_data(
+      self,
+      length: int,
+      p: Tuple[float, ...] = (0.5,),
+      low: float = 0.,
+      high: float = 1.,
+  ):
+    
+    # Currently we dont use a lot of these returned values but this may change
+    # TODO : currently hardcoded the binomial dist stuff and the amount of data sampled
+    (
+        adjacency_mat,
+        weighted_mat,
+        exogenous_nodes,
+        endogenous_nodes,
+        outcome_nodes,
+        scm
+    ) = _random_causal_graph(
+        nb_nodes=length,
+        p=self._rng.choice(p),
+        low=low,
+        high=high,
+        binomial_exogenous_variables=True,
+        binomial_probability=0.5
+    )
+
+    df = scm.sample(5000)
+
+    return [df]
 
 
 SAMPLERS = {
@@ -664,6 +700,7 @@ SAMPLERS = {
     'segments_intersect': SegmentsSampler,
     'graham_scan': ConvexHullSampler,
     'jarvis_march': ConvexHullSampler,
+    "ic" : CausalDataSampler,
 }
 
 

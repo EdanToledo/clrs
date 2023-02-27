@@ -168,7 +168,7 @@ def test_causal_data_generation(nb_nodes, low=0.0, high=1.0, p=[0.1, 0.2, 0.3, 0
         scm,
     ) = _random_causal_graph(
         nb_nodes=nb_nodes,
-        p=_rng.choice(p),
+        p=0.1,
         low=low,
         high=high,
         binomial_exogenous_variables=False,
