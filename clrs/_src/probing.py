@@ -186,6 +186,7 @@ def split_stages(
       # pytype: enable=attribute-error
       if t in [_Type.MASK_ONE, _Type.CATEGORICAL
               ] and not np.all(np.sum(np.abs(data), -1) == 1):
+        print(name, data)
         raise ProbeError(f'Expected one-hot `data` for probe "{name}"')
 
     dim_to_expand = 1 if stage == _Stage.HINT else 0

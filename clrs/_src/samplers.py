@@ -662,7 +662,7 @@ class CausalDataSampler(Sampler):
         binomial_probability=0.5
     )
 
-    df = scm.sample(5000)
+    df = scm.sample(10)
 
     return [df]
 

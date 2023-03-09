@@ -100,6 +100,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
                     g.remove_edge(a, b)
                     separating_sets[(a, b)] = S_ab
 
+                    
                     probing.push(
                         probes,
                         specs.Stage.HINT,
@@ -325,7 +326,7 @@ if __name__ == "__main__":
     X = np.transpose(np.vstack((x0, x1, x2, x3, x4)))
     X_df = pd.DataFrame(data=X, columns=[f"x{i}" for i in range(5)])
 
-    adj_mat, arrows_mat, probes = ic_star(X_df)
+    (adj_mat, arrows_mat), probes = ic_star(X_df)
     print(f"Variables: {X_df.columns.sort_values()}")
     print(f"Adjacency matrix:\n{adj_mat}")
     print(f"Arrows matrix:\n{arrows_mat}")
@@ -368,7 +369,7 @@ if __name__ == "__main__":
 
     scm.cgm.draw().view()
 
-    adj_mat_2, arrows_mat_2, probes_2 = ic_star(X_df_2)
+    (adj_mat_2, arrows_mat_2), probes_2 = ic_star(X_df_2)
     print(f"Variables: {X_df_2.columns.sort_values()}")
     print(f"Adjacency matrix:\n{adj_mat_2}")
     print(f"Arrows matrix:\n{arrows_mat_2}")
@@ -379,7 +380,6 @@ if __name__ == "__main__":
     nx.draw(ic_star_graph_2, pos)
     labels = { i : f"x{i}" for i in range(len(adj_mat_2))}
     nx.draw_networkx_labels(ic_star_graph_2, pos, labels)
-
 
     # something is buggy right here
     variable_types_2 = {name: "c" for name in X_df_2.columns}
