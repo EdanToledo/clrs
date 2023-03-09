@@ -113,6 +113,19 @@ for alg in ['quickselect', 'minimum', 'binary_search', 'naive_string_matcher',
 
 
 SPECS = types.MappingProxyType({
+    # added ic_alg part - SZ
+    'ic_alg':{
+        'X':        (Stage.INPUT, Location.NODE, Type.SCALAR),          # input: array of observed values n_samples x n_nodes
+        'A':        (Stage.OUTPUT, Location.EDGE, Type.SCALAR),         # output: adjacency matrix
+        'arrows':   (Stage.OUTPUT, Location.EDGE, Type.SCALAR),         # output: arrow information as defined in Pearl 2000
+        'A_h':      (Stage.HINT, Location.EDGE, Type.SCALAR),           # hint: intermediate adjacency matrix (without arrows)
+        'arrows_h': (Stage.HINT, Location.EDGE, Type.SCALAR),           # hint: intermediate arrow matrix
+        'node_1':   (Stage.HINT, Location.NODE, Type.MASK_ONE),         # hint: representing node_1 of the edge you're fiddling with
+        'node_2':   (Stage.HINT, Location.NODE, Type.MASK_ONE),         # hint: representing node_2 of the edge you're fiddling with
+        'node_3':   (Stage.HINT, Location.NODE, Type.MASK_ONE),         # hint: a third node of interest -- useful in step 2 and R1
+        'S_12':     (Stage.HINT, Location.NODE, Type.MASK),             # hint: separating set for nodes 1 and 2 -- useful in steps 1 and 2
+    },
+    # the rest is as existed in original clrs folder - SZ
     'insertion_sort': {
         'pos': (Stage.INPUT, Location.NODE, Type.SCALAR),
         'key': (Stage.INPUT, Location.NODE, Type.SCALAR),

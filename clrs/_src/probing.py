@@ -237,6 +237,14 @@ def graph(A: np.ndarray) -> np.ndarray:
   probe = ((A + np.eye(A.shape[0])) != 0) * 1.0
   return probe
 
+# added probing helper function for masking a set of nodes - SZ
+def mask_set(idxs: list, n: int) -> np.ndarray:
+  for i in idxs:
+    assert n > i
+  probe = np.zeros(n)
+  for i in idxs:
+    probe[i] = 1
+  return probe
 
 def mask_one(i: int, n: int) -> np.ndarray:
   """Constructs a `mask_one` probe."""
