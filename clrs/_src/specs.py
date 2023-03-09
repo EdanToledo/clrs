@@ -113,8 +113,8 @@ for alg in ['quickselect', 'minimum', 'binary_search', 'naive_string_matcher',
 
 
 SPECS = types.MappingProxyType({
-    # added ic_alg part - SZ
-    'ic_alg':{
+    # added ic_star part - SZ
+    'ic_star':{
         'X':        (Stage.INPUT, Location.NODE, Type.SCALAR),          # input: array of observed values n_samples x n_nodes
         'A':        (Stage.OUTPUT, Location.EDGE, Type.SCALAR),         # output: adjacency matrix
         'arrows':   (Stage.OUTPUT, Location.EDGE, Type.SCALAR),         # output: arrow information as defined in Pearl 2000

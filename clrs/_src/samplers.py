@@ -700,7 +700,7 @@ SAMPLERS = {
     'segments_intersect': SegmentsSampler,
     'graham_scan': ConvexHullSampler,
     'jarvis_march': ConvexHullSampler,
-    "ic" : CausalDataSampler,
+    "ic_star" : CausalDataSampler,
 }
 
 
