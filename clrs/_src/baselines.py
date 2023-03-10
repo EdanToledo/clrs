@@ -34,6 +34,7 @@ from clrs._src import specs
 import haiku as hk
 import jax
 import jax.numpy as jnp
+import numpy as np
 import optax
 
 
@@ -277,7 +278,7 @@ class BaselineModel(model.Model):
     if not isinstance(features, list):
       assert len(self._spec) == 1
       features = [features]
-    self.params = self.net_fn.init(jax.random.PRNGKey(seed), features, True,
+    self.params = self.net_fn.init(jax.random.PRNGKey(seed), features, True,  # pytype: disable=wrong-arg-types  # jax-ndarray
                                    algorithm_index=-1,
                                    return_hints=False,
                                    return_all_outputs=False)
@@ -551,10 +552,10 @@ class BaselineModelChunked(BaselineModel):
            features: List[List[_FeaturesChunked]],
            seed: _Seed):
     self.mp_states = self._init_mp_state(features,
-                                         jax.random.PRNGKey(seed))
+                                         jax.random.PRNGKey(seed))  # pytype: disable=wrong-arg-types  # jax-ndarray
     self.init_mp_states = [list(x) for x in self.mp_states]
     self.params = self.net_fn.init(
-        jax.random.PRNGKey(seed), features[0], self.mp_states[0],
+        jax.random.PRNGKey(seed), features[0], self.mp_states[0],  # pytype: disable=wrong-arg-types  # jax-ndarray
         True, init_mp_state=False, algorithm_index=-1)
     self.opt_state = self.opt.init(self.params)
     # We will use the optimizer state skeleton for traversal when we
@@ -767,15 +768,19 @@ def filter_null_grads(grads, opt, opt_state, opt_state_skeleton, algo_idx):
     masked_grads = {k: _keep_in_algo(k, v) for k, v in grads.items()}
   flat_grads, treedef = jax.tree_util.tree_flatten(masked_grads)
   flat_opt_state = jax.tree_util.tree_map(
-      lambda _, x: treedef.flatten_up_to(x)  # pylint:disable=g-long-lambda
-      if not isinstance(x, _Array) else x, opt_state_skeleton, opt_state)
+      lambda _, x: x  # pylint:disable=g-long-lambda
+      if isinstance(x, (np.ndarray, jax.Array))
+      else treedef.flatten_up_to(x),
+      opt_state_skeleton,
+      opt_state,
+  )
 
   # Compute updates only for the params with gradient.
   flat_updates, flat_opt_state = opt_update(opt, flat_grads, flat_opt_state)
 
   def unflatten(flat, original):
     """Restore tree structure, filling missing (None) leaves with original."""
-    if isinstance(flat, _Array):
+    if isinstance(flat, (np.ndarray, jax.Array)):
       return flat
     return jax.tree_util.tree_map(lambda x, y: x if y is None else y, original,
                                   treedef.unflatten(flat))
