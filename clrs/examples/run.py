@@ -30,8 +30,8 @@ import requests
 import tensorflow as tf
 
 
-flags.DEFINE_list('algorithms', ['bfs'], 'Which algorithms to run.')
-flags.DEFINE_list('train_lengths', ['4'],
+flags.DEFINE_list('algorithms', ['ic_star'], 'Which algorithms to run.')
+flags.DEFINE_list('train_lengths', ['3'],
                   'Which training sizes to use. A size of -1 means '
                   'use the benchmark dataset.')
 flags.DEFINE_integer('length_needle', -8,
@@ -43,9 +43,9 @@ flags.DEFINE_integer('length_needle', -8,
                      'the haystack (the default sampler behavior).')
 flags.DEFINE_integer('seed', 42, 'Random seed to set')
 
-flags.DEFINE_boolean('random_pos', True,
+flags.DEFINE_boolean('random_pos', False,
                      'Randomize the pos input common to all algos.')
-flags.DEFINE_boolean('enforce_permutations', True,
+flags.DEFINE_boolean('enforce_permutations', False,
                      'Whether to enforce permutation-type node pointers.')
 flags.DEFINE_boolean('enforce_pred_as_input', True,
                      'Whether to change pred_h hints into pred inputs.')
@@ -104,7 +104,7 @@ flags.DEFINE_integer('nb_triplet_fts', 8,
 flags.DEFINE_enum('encoder_init', 'xavier_on_scalars',
                   ['default', 'xavier_on_scalars'],
                   'Initialiser to use for the encoders.')
-flags.DEFINE_enum('processor_type', 'triplet_gmpnn',
+flags.DEFINE_enum('processor_type', 'deepsets',
                   ['deepsets', 'mpnn', 'pgn', 'pgn_mask',
                    'triplet_mpnn', 'triplet_pgn', 'triplet_pgn_mask',
                    'gat', 'gatv2', 'gat_full', 'gatv2_full',
@@ -338,7 +338,8 @@ def create_samplers(rng, train_lengths: List[int]):
                       **common_sampler_args)
       val_sampler, val_samples, spec = make_multi_sampler(**val_args)
 
-      test_args = dict(sizes=[-1],
+      # TODO (edan) : change test args sizes back to [-1]
+      test_args = dict(sizes=train_lengths,
                        split='test',
                        batch_size=32,
                        multiplier=2 * mult,

@@ -15,6 +15,7 @@ import clrs._src.specs as specs
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+import time 
 
 import networkx as nx
 import pydot
@@ -38,10 +39,16 @@ def ic_star(X_df: _DataFrame) -> _Out:
     """IC* algorithm using PC alg in step 1
     X is the NUM_SAMPLES x NUM_VARS array of observations derived from an SCM
     """
+    
     chex.assert_rank(X_df.to_numpy(), 2)
-    probes = probing.initialize(specs.SPECS["ic_star"])
 
-    probing.push(probes, specs.Stage.INPUT, next_probe={"X": np.copy(X_df)})
+    flatten = lambda x : np.squeeze(np.reshape(x, (-1)))
+
+    probes = probing.initialize(specs.SPECS["ic_star"])
+    
+    input_data = flatten(np.copy(X_df))
+   
+    probing.push(probes, specs.Stage.INPUT, next_probe={"X": input_data})
 
     NUM_VARS = X_df.shape[1]
     VAR_NAMES = list(
