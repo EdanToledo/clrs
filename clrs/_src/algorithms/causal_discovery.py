@@ -42,18 +42,18 @@ def ic_star(X_df: _DataFrame) -> _Out:
     
     chex.assert_rank(X_df.to_numpy(), 2)
 
-    flatten = lambda x : np.squeeze(np.reshape(x, (-1)))
-
-    probes = probing.initialize(specs.SPECS["ic_star"])
-    
-    input_data = flatten(np.copy(X_df))
-   
-    probing.push(probes, specs.Stage.INPUT, next_probe={"X": input_data})
-
     NUM_VARS = X_df.shape[1]
     VAR_NAMES = list(
         X_df.columns.sort_values()
     )  # NOTE: this is sorted for consistency in adjacency matrix and arrows_mat representation
+    
+
+    probes = probing.initialize(specs.SPECS["ic_star"])
+    
+    input_data = np.copy(X_df) # Shape is Num Data points x NUM_VARS
+    input_data = np.swapaxes(input_data, 0, 1)
+   
+    probing.push(probes, specs.Stage.INPUT, next_probe={"X": input_data})
 
     # Step 1: find undirected graph with conditionally independent vars unconnected
     # initialize completely connected undirected graph
@@ -74,7 +74,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
             "node_2": np.zeros(NUM_VARS),
             "node_3": np.zeros(NUM_VARS),
             "S_12": np.zeros(NUM_VARS),
-            "A_h": np.copy(nx.to_numpy_array(g)),
+            "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
             "arrows_h": np.copy(arrows_mat),
         },
     )
@@ -118,7 +118,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
                             "S_12": probing.mask_set(
                                 [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
                             ),
-                            "A_h": np.copy(nx.to_numpy_array(g)),
+                            "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
                             "arrows_h": np.copy(arrows_mat),
                         },
                     )
@@ -156,7 +156,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
                             "S_12": probing.mask_set(
                                 [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
                             ),
-                            "A_h": np.copy(nx.to_numpy_array(g)),
+                            "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
                             "arrows_h": np.copy(arrows_mat),
                         },
                     )
@@ -180,7 +180,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
         specs.Stage.OUTPUT,
         next_probe={
             "arrows": np.copy(arrows_mat),
-            "A": np.copy(A),
+            "A": probing.graph(np.copy(A)),
         },
     )
 

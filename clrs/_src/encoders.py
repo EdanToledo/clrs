@@ -135,5 +135,5 @@ def _encode_inputs(encoders, dp: _DataPoint) -> _Array:
   if dp.type_ == _Type.CATEGORICAL:
     encoding = encoders[0](dp.data)
   else:
-    encoding = encoders[0](jnp.expand_dims(dp.data, -1))
+    encoding = encoders[0](dp.data)
   return encoding
