@@ -320,6 +320,19 @@ def strings_pred(T_pos: np.ndarray, P_pos: np.ndarray) -> np.ndarray:
     probe[T_pos.shape[0] + P_pos[j]] = T_pos.shape[0] + P_pos[j - 1]
   return probe
 
+def arrows_probe(arrows: np.ndarray, nb_classes: int) -> np.ndarray:
+  """Constructs a `arrows` probe."""
+  assert nb_classes > 0
+  n = arrows.shape[0]
+  m = arrows.shape[1]
+
+  # Add an extra class for 'this cell left blank.'
+  probe_ret = np.zeros((n, m, nb_classes))
+  for i in range(0, n):
+    for j in range(0, m):
+      probe_ret[i, j, int(arrows[i, j])] = _OutputClass.POSITIVE
+  
+  return probe_ret
 
 @functools.partial(jnp.vectorize, signature='(n)->(n,n),(n)')
 def predecessor_to_cyclic_predecessor_and_first(

@@ -75,7 +75,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
             "node_3": np.zeros(NUM_VARS),
             "S_12": np.zeros(NUM_VARS),
             "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
-            "arrows_h": np.copy(arrows_mat),
+            "arrows_h": probing.arrows_probe(np.copy(arrows_mat),3),
         },
     )
 
@@ -119,7 +119,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
                                 [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
                             ),
                             "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
-                            "arrows_h": np.copy(arrows_mat),
+                            "arrows_h": probing.arrows_probe(np.copy(arrows_mat),3),
                         },
                     )
                     break
@@ -157,7 +157,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
                                 [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
                             ),
                             "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
-                            "arrows_h": np.copy(arrows_mat),
+                            "arrows_h": probing.arrows_probe(np.copy(arrows_mat),3),
                         },
                     )
 
@@ -179,7 +179,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
         probes,
         specs.Stage.OUTPUT,
         next_probe={
-            "arrows": np.copy(arrows_mat),
+            "arrows": probing.arrows_probe(np.copy(arrows_mat), 3),
             "A": probing.graph(np.copy(A)),
         },
     )

@@ -118,9 +118,9 @@ SPECS = types.MappingProxyType({
     'ic_star':{
         'X':        (Stage.INPUT, Location.NODE, Type.SCALAR),          # input: array of observed values n_samples x n_nodes
         'A':        (Stage.OUTPUT, Location.EDGE, Type.MASK),           # output: adjacency matrix
-        'arrows':   (Stage.OUTPUT, Location.EDGE, Type.SCALAR),         # output: arrow information as defined in Pearl 2000
+        'arrows':   (Stage.OUTPUT, Location.EDGE, Type.CATEGORICAL),    # output: arrow information as defined in Pearl 2000
         'A_h':      (Stage.HINT, Location.EDGE, Type.MASK),             # hint: intermediate adjacency matrix (without arrows)
-        'arrows_h': (Stage.HINT, Location.EDGE, Type.SCALAR),           # hint: intermediate arrow matrix
+        'arrows_h': (Stage.HINT, Location.EDGE, Type.CATEGORICAL),      # hint: intermediate arrow matrix
         'node_1':   (Stage.HINT, Location.NODE, Type.MASK),             # hint: representing node_1 of the edge you're fiddling with
         'node_2':   (Stage.HINT, Location.NODE, Type.MASK),             # hint: representing node_2 of the edge you're fiddling with
         'node_3':   (Stage.HINT, Location.NODE, Type.MASK),             # hint: a third node of interest -- useful in step 2 and R1
