@@ -132,8 +132,8 @@ def accum_graph_fts(encoders, dp: _DataPoint,
 
 
 def _encode_inputs(encoders, dp: _DataPoint) -> _Array:
-  if dp.type_ == _Type.CATEGORICAL:
+  if dp.type_ == _Type.CATEGORICAL or dp.type_ ==_Type.VECTOR:
     encoding = encoders[0](dp.data)
   else:
-    encoding = encoders[0](dp.data)
+    encoding = encoders[0](jnp.expand_dims(dp.data, -1))
   return encoding

@@ -55,6 +55,7 @@ class Type:
   SHOULD_BE_PERMUTATION = 'should_be_permutation'
   PERMUTATION_POINTER = 'permutation_pointer'
   SOFT_POINTER = 'soft_pointer'
+  VECTOR = "vector"
 
 
 class OutputClass:
@@ -116,7 +117,7 @@ for alg in ['quickselect', 'minimum', 'binary_search', 'naive_string_matcher',
 SPECS = types.MappingProxyType({
     # added ic_star part - SZ
     'ic_star':{
-        'X':        (Stage.INPUT, Location.NODE, Type.SCALAR),          # input: array of observed values n_samples x n_nodes
+        'X':        (Stage.INPUT, Location.NODE, Type.VECTOR),          # input: array of observed values n_samples x n_nodes
         'A':        (Stage.OUTPUT, Location.EDGE, Type.MASK),           # output: adjacency matrix
         'arrows':   (Stage.OUTPUT, Location.EDGE, Type.CATEGORICAL),    # output: arrow information as defined in Pearl 2000
         'A_h':      (Stage.HINT, Location.EDGE, Type.MASK),             # hint: intermediate adjacency matrix (without arrows)
