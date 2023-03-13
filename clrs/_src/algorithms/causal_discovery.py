@@ -15,7 +15,7 @@ import clrs._src.specs as specs
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-import time 
+import time
 
 import networkx as nx
 import pydot
@@ -39,20 +39,19 @@ def ic_star(X_df: _DataFrame) -> _Out:
     """IC* algorithm using PC alg in step 1
     X is the NUM_SAMPLES x NUM_VARS array of observations derived from an SCM
     """
-    
+
     chex.assert_rank(X_df.to_numpy(), 2)
 
     NUM_VARS = X_df.shape[1]
     VAR_NAMES = list(
         X_df.columns.sort_values()
     )  # NOTE: this is sorted for consistency in adjacency matrix and arrows_mat representation
-    
 
     probes = probing.initialize(specs.SPECS["ic_star"])
-    
-    input_data = np.copy(X_df) # Shape is Num Data points x NUM_VARS
+
+    input_data = np.copy(X_df)  # Shape is Num Data points x NUM_VARS
     input_data = np.swapaxes(input_data, 0, 1)
-   
+
     probing.push(probes, specs.Stage.INPUT, next_probe={"X": input_data})
 
     # Step 1: find undirected graph with conditionally independent vars unconnected
@@ -75,10 +74,10 @@ def ic_star(X_df: _DataFrame) -> _Out:
             "node_3": np.zeros(NUM_VARS),
             "S_12": np.zeros(NUM_VARS),
             "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
-            "arrows_h": probing.arrows_probe(np.copy(arrows_mat),3),
+            "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
         },
     )
-
+    
     # presets
     independence_test = RobustRegressionTest  # just using robust regression test rn, TODO: check what this does
     max_k = NUM_VARS + 1  # TODO: check why we're adding 1 here
@@ -107,7 +106,6 @@ def ic_star(X_df: _DataFrame) -> _Out:
                     g.remove_edge(a, b)
                     separating_sets[(a, b)] = S_ab
 
-                    
                     probing.push(
                         probes,
                         specs.Stage.HINT,
@@ -119,7 +117,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
                                 [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
                             ),
                             "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
-                            "arrows_h": probing.arrows_probe(np.copy(arrows_mat),3),
+                            "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
                         },
                     )
                     break
@@ -157,7 +155,7 @@ def ic_star(X_df: _DataFrame) -> _Out:
                                 [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
                             ),
                             "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
-                            "arrows_h": probing.arrows_probe(np.copy(arrows_mat),3),
+                            "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
                         },
                     )
 
@@ -230,8 +228,8 @@ def apply_recursion_rule_1(g, probes, arrows_mat, VAR_NAMES, NUM_VARS):
                                 VAR_NAMES.index(a), NUM_VARS
                             ),  # TODO: check if this is the right ordering
                             "S_12": np.zeros(NUM_VARS),
-                            "A_h": np.copy(nx.to_numpy_array(g)),
-                            "arrows_h": np.copy(arrows_mat),
+                            "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
+                            "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
                         },
                     )
                 if (
@@ -253,8 +251,8 @@ def apply_recursion_rule_1(g, probes, arrows_mat, VAR_NAMES, NUM_VARS):
                                 VAR_NAMES.index(b), NUM_VARS
                             ),  # TODO: check if this is the right ordering
                             "S_12": np.zeros(NUM_VARS),
-                            "A_h": np.copy(nx.to_numpy_array(g)),
-                            "arrows_h": np.copy(arrows_mat),
+                            "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
+                            "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
                         },
                     )
     return added_arrows
@@ -280,8 +278,8 @@ def apply_recursion_rule_2(g, probes, arrows_mat, VAR_NAMES, NUM_VARS):
                         "node_2": probing.mask_one(VAR_NAMES.index(b), NUM_VARS),
                         "node_3": np.zeros(NUM_VARS),
                         "S_12": np.zeros(NUM_VARS),
-                        "A_h": np.copy(nx.to_numpy_array(g)),
-                        "arrows_h": np.copy(arrows_mat),
+                        "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
+                        "arrows_h": probing.arrows_probe(np.copy(arrows_mat),3),
                     },
                 )
         if arrows_mat[b_idx, a_idx] == 0:
@@ -297,8 +295,8 @@ def apply_recursion_rule_2(g, probes, arrows_mat, VAR_NAMES, NUM_VARS):
                         "node_2": probing.mask_one(VAR_NAMES.index(a), NUM_VARS),
                         "node_3": np.zeros(NUM_VARS),
                         "S_12": np.zeros(NUM_VARS),
-                        "A_h": np.copy(nx.to_numpy_array(g)),
-                        "arrows_h": np.copy(arrows_mat),
+                        "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
+                        "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3 ),
                     },
                 )
     return added_arrows
@@ -385,7 +383,7 @@ if __name__ == "__main__":
     fig = plt.figure()
     plt.title("IC Star Graph")
     nx.draw(ic_star_graph_2, pos)
-    labels = { i : f"x{i}" for i in range(len(adj_mat_2))}
+    labels = {i: f"x{i}" for i in range(len(adj_mat_2))}
     nx.draw_networkx_labels(ic_star_graph_2, pos, labels)
 
     # something is buggy right here
@@ -398,5 +396,5 @@ if __name__ == "__main__":
     fig = plt.figure()
     plt.title("IC Graph")
     nx.draw(graph_comp_2, pos, with_labels=True)
-    
+
     plt.show()

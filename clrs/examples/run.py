@@ -31,7 +31,7 @@ import tensorflow as tf
 
 
 flags.DEFINE_list('algorithms', ['ic_star'], 'Which algorithms to run.')
-flags.DEFINE_list('train_lengths', ['3'],
+flags.DEFINE_list('train_lengths', ['5'],
                   'Which training sizes to use. A size of -1 means '
                   'use the benchmark dataset.')
 flags.DEFINE_integer('length_needle', -8,
