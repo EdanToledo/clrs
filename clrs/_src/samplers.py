@@ -658,11 +658,11 @@ class CausalDataSampler(Sampler):
         p=self._rng.choice(p),
         low=low,
         high=high,
-        binomial_exogenous_variables=True,
+        binomial_exogenous_variables=False,
         binomial_probability=0.5
     )
 
-    df = scm.sample(50)
+    df = scm.sample(60)
 
     return [df]
 

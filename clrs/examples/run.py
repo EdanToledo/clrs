@@ -31,7 +31,7 @@ import tensorflow as tf
 
 
 flags.DEFINE_list('algorithms', ['ic_star'], 'Which algorithms to run.')
-flags.DEFINE_list('train_lengths', ['3'],
+flags.DEFINE_list('train_lengths', ['4'],
                   'Which training sizes to use. A size of -1 means '
                   'use the benchmark dataset.')
 flags.DEFINE_integer('length_needle', -8,
@@ -68,7 +68,7 @@ flags.DEFINE_float('learning_rate', 0.001, 'Learning rate to use.')
 flags.DEFINE_float('grad_clip_max_norm', 1.0,
                    'Gradient clipping by norm. 0.0 disables grad clipping')
 flags.DEFINE_float('dropout_prob', 0.0, 'Dropout rate to use.')
-flags.DEFINE_float('hint_teacher_forcing', 0.0,
+flags.DEFINE_float('hint_teacher_forcing', 0.5,
                    'Probability that ground-truth teacher hints are encoded '
                    'during training instead of predicted hints. Only '
                    'pertinent in encoded_decoded modes.')
@@ -104,7 +104,7 @@ flags.DEFINE_integer('nb_triplet_fts', 8,
 flags.DEFINE_enum('encoder_init', 'xavier_on_scalars',
                   ['default', 'xavier_on_scalars'],
                   'Initialiser to use for the encoders.')
-flags.DEFINE_enum('processor_type', 'gat',
+flags.DEFINE_enum('processor_type', 'triplet_gmpnn',
                   ['deepsets', 'mpnn', 'pgn', 'pgn_mask',
                    'triplet_mpnn', 'triplet_pgn', 'triplet_pgn_mask',
                    'gat', 'gatv2', 'gat_full', 'gatv2_full',
@@ -118,6 +118,7 @@ flags.DEFINE_string('dataset_path', '/tmp/CLRS30',
                     'Path in which dataset is stored.')
 flags.DEFINE_boolean('freeze_processor', False,
                      'Whether to freeze the processor of the model.')
+
 
 FLAGS = flags.FLAGS
 
