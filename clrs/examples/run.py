@@ -367,6 +367,41 @@ def create_samplers(rng, train_lengths: List[int]):
 
 
 def main(unused_argv):
+  config = {
+    'algorithms': FLAGS.algorithms,
+    'train_lengths': FLAGS.train_lengths,
+    'length_needle': FLAGS.length_needle,
+    'seed': FLAGS.seed,
+    'random_pos': FLAGS.random_pos,
+    'enforce_permutations': FLAGS.enforce_permutations,
+    'enforce_pred_as_input': FLAGS.enforce_pred_as_input,
+    'batch_size': FLAGS.batch_size,
+    'chunked_training': FLAGS.chunked_training,
+    'chunk_length': FLAGS.chunk_length,
+    'train_steps': FLAGS.train_steps,
+    'eval_every': FLAGS.eval_every,
+    'test_every': FLAGS.test_every,
+    'hidden_size': FLAGS.hidden_size,
+    'num_heads': FLAGS.nb_heads,
+    'num_msg_passing_steps': FLAGS.nb_msg_passing_steps,
+    'learning_rate': FLAGS.learning_rate,
+    'grad_clip_max_norm': FLAGS.grad_clip_max_norm,
+    'dropout_prob': FLAGS.dropout_prob,
+    'hint_teacher_forcing': FLAGS.hint_teacher_forcing,
+    'hint_mode': FLAGS.hint_mode,
+    'hint_repred_mode': FLAGS.hint_repred_mode,
+    'use_ln': FLAGS.use_ln,
+    'use_lstm': FLAGS.use_lstm,
+    'nb_triplet_fts': FLAGS.nb_triplet_fts,
+    'encoder_init': FLAGS.encoder_init,
+    'processor_type': FLAGS.processor_type,
+    'checkpoint_path': FLAGS.checkpoint_path,
+    'dataset_path': FLAGS.dataset_path,
+    'freeze_processor': FLAGS.freeze_processor
+  }
+  import wandb
+  wandb.init(project=FLAGS.wandb_project_name, entity=FLAGS.wandb_entity_name, name = FLAGS.wandb_run_name, config = config)
+
   if FLAGS.hint_mode == 'encoded_decoded':
     encode_hints = True
     decode_hints = True
@@ -378,9 +413,6 @@ def main(unused_argv):
     decode_hints = False
   else:
     raise ValueError('Hint mode not in {encoded_decoded, decoded_only, none}.')
-
-  import wandb
-  wandb.init(project=FLAGS.wandb_project_name, entity=FLAGS.wandb_entity_name, name = FLAGS.wandb_run_name)
 
   train_lengths = [int(x) for x in FLAGS.train_lengths]
 
@@ -439,39 +471,6 @@ def main(unused_argv):
   # until all algos have had at least one evaluation.
   val_scores = [-99999.9] * len(FLAGS.algorithms)
   length_idx = 0
-
-  wandb.config = {
-    'algorithms': FLAGS.algorithms,
-    'train_lengths': FLAGS.train_lengths,
-    'length_needle': FLAGS.length_needle,
-    'seed': FLAGS.seed,
-    'random_pos': FLAGS.random_pos,
-    'enforce_permutations': FLAGS.enforce_permutations,
-    'enforce_pred_as_input': FLAGS.enforce_pred_as_input,
-    'batch_size': FLAGS.batch_size,
-    'chunked_training': FLAGS.chunked_training,
-    'chunk_length': FLAGS.chunk_length,
-    'train_steps': FLAGS.train_steps,
-    'eval_every': FLAGS.eval_every,
-    'test_every': FLAGS.test_every,
-    'hidden_size': FLAGS.hidden_size,
-    'num_heads': FLAGS.nb_heads,
-    'num_msg_passing_steps': FLAGS.nb_msg_passing_steps,
-    'learning_rate': FLAGS.learning_rate,
-    'grad_clip_max_norm': FLAGS.grad_clip_max_norm,
-    'dropout_prob': FLAGS.dropout_prob,
-    'hint_teacher_forcing': FLAGS.hint_teacher_forcing,
-    'hint_mode': FLAGS.hint_mode,
-    'hint_repred_mode': FLAGS.hint_repred_mode,
-    'use_ln': FLAGS.use_ln,
-    'use_lstm': FLAGS.use_lstm,
-    'nb_triplet_fts': FLAGS.nb_triplet_fts,
-    'encoder_init': FLAGS.encoder_init,
-    'processor_type': FLAGS.processor_type,
-    'checkpoint_path': FLAGS.checkpoint_path,
-    'dataset_path': FLAGS.dataset_path,
-    'freeze_processor': FLAGS.freeze_processor
-  }
 
   while step < FLAGS.train_steps:
     feedback_list = [next(t) for t in train_samplers]
