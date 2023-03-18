@@ -1,0 +1,136 @@
+{
+    "pythonClassName": "tensorflow_datasets.core.features.features_dict.FeaturesDict",
+    "featuresDict": {
+        "features": {
+            "input_X": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "12",
+                            "60"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "hint_arrows_h": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "65",
+                            "12",
+                            "12",
+                            "3"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "hint_S_12": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "65",
+                            "12"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "output_A": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "12",
+                            "12"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "output_arrows": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "12",
+                            "12",
+                            "3"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "hint_A_h": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "65",
+                            "12",
+                            "12"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "lengths": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {},
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "hint_node_1": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "65",
+                            "12"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "hint_node_2": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "65",
+                            "12"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "hint_node_3": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "65",
+                            "12"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            }
+        }
+    }
+}
