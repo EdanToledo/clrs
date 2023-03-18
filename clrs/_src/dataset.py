@@ -46,7 +46,7 @@ DEFAULT_BUILDER_CONFIGS = []
 
 
 def _build_default_builder_configs():
-  for split in ['train', 'val', 'test']:
+  for split in ['val', 'test']:
     for alg in specs.CLRS_30_ALGS:
       DEFAULT_BUILDER_CONFIGS.append(
           CLRSConfig(name=f'{alg}_{split}', split=split))

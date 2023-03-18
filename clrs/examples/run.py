@@ -31,7 +31,7 @@ import tensorflow as tf
 
 
 flags.DEFINE_list('algorithms', ['ic_star'], 'Which algorithms to run.')
-flags.DEFINE_list('train_lengths', ['4','5','6'],
+flags.DEFINE_list('train_lengths', ['3','4','5','6'],
                   'Which training sizes to use. A size of -1 means '
                   'use the benchmark dataset.')
 flags.DEFINE_integer('length_needle', -8,
@@ -55,7 +55,7 @@ flags.DEFINE_boolean('chunked_training', False,
 flags.DEFINE_integer('chunk_length', 16,
                      'Time chunk length used for training (if '
                      '`chunked_training` is True.')
-flags.DEFINE_integer('train_steps', 5000, 'Number of training iterations.')
+flags.DEFINE_integer('train_steps', 10_000, 'Number of training iterations.')
 flags.DEFINE_integer('eval_every', 50, 'Evaluation frequency (in steps).')
 flags.DEFINE_integer('test_every', 100, 'Evaluation frequency (in steps).')
 
@@ -104,7 +104,7 @@ flags.DEFINE_integer('nb_triplet_fts', 8,
 flags.DEFINE_enum('encoder_init', 'xavier_on_scalars',
                   ['default', 'xavier_on_scalars'],
                   'Initialiser to use for the encoders.')
-flags.DEFINE_enum('processor_type', 'mpnn',
+flags.DEFINE_enum('processor_type', 'triplet_gmpnn',
                   ['deepsets', 'mpnn', 'pgn', 'pgn_mask',
                    'triplet_mpnn', 'triplet_pgn', 'triplet_pgn_mask',
                    'gat', 'gatv2', 'gat_full', 'gatv2_full',
