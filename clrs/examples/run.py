@@ -31,7 +31,7 @@ import tensorflow as tf
 
 
 flags.DEFINE_list('algorithms', ['ic_star'], 'Which algorithms to run.')
-flags.DEFINE_list('train_lengths', ['4'],
+flags.DEFINE_list('train_lengths', ['3','4'],
                   'Which training sizes to use. A size of -1 means '
                   'use the benchmark dataset.')
 flags.DEFINE_integer('length_needle', -8,
@@ -55,9 +55,9 @@ flags.DEFINE_boolean('chunked_training', False,
 flags.DEFINE_integer('chunk_length', 16,
                      'Time chunk length used for training (if '
                      '`chunked_training` is True.')
-flags.DEFINE_integer('train_steps', 10000, 'Number of training iterations.')
+flags.DEFINE_integer('train_steps', 1000, 'Number of training iterations.')
 flags.DEFINE_integer('eval_every', 50, 'Evaluation frequency (in steps).')
-flags.DEFINE_integer('test_every', 500, 'Evaluation frequency (in steps).')
+flags.DEFINE_integer('test_every', 100, 'Evaluation frequency (in steps).')
 
 flags.DEFINE_integer('hidden_size', 128,
                      'Number of hidden units of the model.')
@@ -68,7 +68,7 @@ flags.DEFINE_float('learning_rate', 0.001, 'Learning rate to use.')
 flags.DEFINE_float('grad_clip_max_norm', 1.0,
                    'Gradient clipping by norm. 0.0 disables grad clipping')
 flags.DEFINE_float('dropout_prob', 0.0, 'Dropout rate to use.')
-flags.DEFINE_float('hint_teacher_forcing', 0.5,
+flags.DEFINE_float('hint_teacher_forcing', 0.5, # TODO  <- check this
                    'Probability that ground-truth teacher hints are encoded '
                    'during training instead of predicted hints. Only '
                    'pertinent in encoded_decoded modes.')
@@ -118,6 +118,9 @@ flags.DEFINE_string('dataset_path', '/tmp/CLRS30',
                     'Path in which dataset is stored.')
 flags.DEFINE_boolean('freeze_processor', False,
                      'Whether to freeze the processor of the model.')
+flags.DEFINE_string('wandb_run_name', 'test', 'wandb run name')
+flags.DEFINE_string('wandb_entity_name', 'ml-at-cl', 'wandb entity name')
+flags.DEFINE_string('wandb_project_name', 'causal-gnn', 'wandb project name')
 
 
 FLAGS = flags.FLAGS
@@ -376,6 +379,9 @@ def main(unused_argv):
   else:
     raise ValueError('Hint mode not in {encoded_decoded, decoded_only, none}.')
 
+  import wandb
+  wandb.init(project=FLAGS.wandb_project_name, entity=FLAGS.wandb_entity_name, name = FLAGS.wandb_run_name)
+
   train_lengths = [int(x) for x in FLAGS.train_lengths]
 
   rng = np.random.RandomState(FLAGS.seed)
@@ -434,6 +440,39 @@ def main(unused_argv):
   val_scores = [-99999.9] * len(FLAGS.algorithms)
   length_idx = 0
 
+  wandb.config = {
+    'algorithms': FLAGS.algorithms,
+    'train_lengths': FLAGS.train_lengths,
+    'length_needle': FLAGS.length_needle,
+    'seed': FLAGS.seed,
+    'random_pos': FLAGS.random_pos,
+    'enforce_permutations': FLAGS.enforce_permutations,
+    'enforce_pred_as_input': FLAGS.enforce_pred_as_input,
+    'batch_size': FLAGS.batch_size,
+    'chunked_training': FLAGS.chunked_training,
+    'chunk_length': FLAGS.chunk_length,
+    'train_steps': FLAGS.train_steps,
+    'eval_every': FLAGS.eval_every,
+    'test_every': FLAGS.test_every,
+    'hidden_size': FLAGS.hidden_size,
+    'num_heads': FLAGS.nb_heads,
+    'num_msg_passing_steps': FLAGS.nb_msg_passing_steps,
+    'learning_rate': FLAGS.learning_rate,
+    'grad_clip_max_norm': FLAGS.grad_clip_max_norm,
+    'dropout_prob': FLAGS.dropout_prob,
+    'hint_teacher_forcing': FLAGS.hint_teacher_forcing,
+    'hint_mode': FLAGS.hint_mode,
+    'hint_repred_mode': FLAGS.hint_repred_mode,
+    'use_ln': FLAGS.use_ln,
+    'use_lstm': FLAGS.use_lstm,
+    'nb_triplet_fts': FLAGS.nb_triplet_fts,
+    'encoder_init': FLAGS.encoder_init,
+    'processor_type': FLAGS.processor_type,
+    'checkpoint_path': FLAGS.checkpoint_path,
+    'dataset_path': FLAGS.dataset_path,
+    'freeze_processor': FLAGS.freeze_processor
+  }
+
   while step < FLAGS.train_steps:
     feedback_list = [next(t) for t in train_samplers]
 
@@ -474,7 +513,7 @@ def main(unused_argv):
       logging.info('Algo %s step %i current loss %f, current_train_items %i.',
                    FLAGS.algorithms[algo_idx], step,
                    cur_loss, current_train_items[algo_idx])
-
+      wandb.log({'train_step': step,'train_loss': cur_loss, 'train_items': current_train_items[algo_idx]})
     # Periodically evaluate model
     if step >= next_eval:
       eval_model.params = train_model.params
@@ -493,6 +532,12 @@ def main(unused_argv):
             extras=common_extras)
         logging.info('(val) algo %s step %d: %s',
                      FLAGS.algorithms[algo_idx], step, val_stats)
+        wandb.log({ 'val_step': step,
+                    'val_examples_seen': current_train_items[algo_idx],
+                    'val_score': val_stats['score'],
+                    'val_A': val_stats['A'],
+                    'val_arrows': val_stats['arrows']
+                  })
         val_scores[algo_idx] = val_stats['score']
 
       next_eval += FLAGS.eval_every
@@ -531,8 +576,15 @@ def main(unused_argv):
         new_rng_key,
         extras=common_extras)
     logging.info('(test) algo %s : %s', FLAGS.algorithms[algo_idx], test_stats)
+    wandb.log({ 'test_step': step,
+                'test_examples_seen': current_train_items[algo_idx],
+                'test_score': test_stats['score'],
+                'test_A': test_stats['A'],
+                'test_arrows': test_stats['arrows']
+              })
 
   logging.info('Done!')
+  wandb.finish()
 
 
 if __name__ == '__main__':
