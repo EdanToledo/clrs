@@ -61,7 +61,7 @@ def visualise_graph(adjacency_matrix, weighted_matrix, node_labels=None):
     plt.show()
 
 
-def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0, noise=0.1, binomial_exogenous_variables = True, binomial_probability = 0.6, _rng = np.random.RandomState(42)):
+def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0, noise=0.05, binomial_exogenous_variables = True, binomial_probability = 0.6, _rng = np.random.RandomState(42)):
     """Generate a random causal graph and SCM.
 
     Args:
