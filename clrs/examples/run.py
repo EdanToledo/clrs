@@ -31,7 +31,7 @@ import tensorflow as tf
 
 
 flags.DEFINE_list('algorithms', ['ic_star'], 'Which algorithms to run.')
-flags.DEFINE_list('train_lengths', ['4'],
+flags.DEFINE_list('train_lengths', ['6'],
                   'Which training sizes to use. A size of -1 means '
                   'use the benchmark dataset.')
 flags.DEFINE_integer('length_needle', -8,
@@ -55,7 +55,7 @@ flags.DEFINE_boolean('chunked_training', False,
 flags.DEFINE_integer('chunk_length', 16,
                      'Time chunk length used for training (if '
                      '`chunked_training` is True.')
-flags.DEFINE_integer('train_steps', 10000, 'Number of training iterations.')
+flags.DEFINE_integer('train_steps', 5000, 'Number of training iterations.')
 flags.DEFINE_integer('eval_every', 50, 'Evaluation frequency (in steps).')
 flags.DEFINE_integer('test_every', 500, 'Evaluation frequency (in steps).')
 
@@ -321,7 +321,7 @@ def create_samplers(rng, train_lengths: List[int]):
       train_args = dict(sizes=train_lengths,
                         split='train',
                         batch_size=FLAGS.batch_size,
-                        multiplier=-1,
+                        multiplier=1,
                         randomize_pos=FLAGS.random_pos,
                         chunked=FLAGS.chunked_training,
                         sampler_kwargs=sampler_kwargs,
@@ -340,7 +340,7 @@ def create_samplers(rng, train_lengths: List[int]):
       val_sampler, val_samples, spec = make_multi_sampler(**val_args)
 
       # TODO (edan) : change test args sizes back to [-1]
-      test_args = dict(sizes=train_lengths,
+      test_args = dict(sizes=[-1],
                        split='test',
                        batch_size=32,
                        multiplier=2 * mult,

@@ -66,36 +66,36 @@ class OutputClass:
 Spec = Dict[str, Tuple[str, str, str]]
 
 CLRS_30_ALGS = [
-    'articulation_points',
-    'activity_selector',
-    'bellman_ford',
-    'bfs',
-    'binary_search',
-    'bridges',
-    'bubble_sort',
-    'dag_shortest_paths',
-    'dfs',
-    'dijkstra',
-    'find_maximum_subarray_kadane',
-    'floyd_warshall',
-    'graham_scan',
-    'heapsort',
-    'insertion_sort',
-    'jarvis_march',
-    'kmp_matcher',
-    'lcs_length',
-    'matrix_chain_order',
-    'minimum',
-    'mst_kruskal',
-    'mst_prim',
-    'naive_string_matcher',
-    'optimal_bst',
-    'quickselect',
-    'quicksort',
-    'segments_intersect',
-    'strongly_connected_components',
-    'task_scheduling',
-    'topological_sort',
+    # 'articulation_points',
+    # 'activity_selector',
+    # 'bellman_ford',
+    # 'bfs',
+    # 'binary_search',
+    # 'bridges',
+    # 'bubble_sort',
+    # 'dag_shortest_paths',
+    # 'dfs',
+    # 'dijkstra',
+    # 'find_maximum_subarray_kadane',
+    # 'floyd_warshall',
+    # 'graham_scan',
+    # 'heapsort',
+    # 'insertion_sort',
+    # 'jarvis_march',
+    # 'kmp_matcher',
+    # 'lcs_length',
+    # 'matrix_chain_order',
+    # 'minimum',
+    # 'mst_kruskal',
+    # 'mst_prim',
+    # 'naive_string_matcher',
+    # 'optimal_bst',
+    # 'quickselect',
+    # 'quicksort',
+    # 'segments_intersect',
+    # 'strongly_connected_components',
+    # 'task_scheduling',
+    # 'topological_sort',
     'ic_star'
 ]
 
@@ -107,11 +107,11 @@ ALGO_IDX_INPUT_NAME = 'algo_idx'
 # number of signals.
 CLRS_30_ALGS_SETTINGS = {alg: {'num_samples_multiplier': 1}
                          for alg in CLRS_30_ALGS}
-CLRS_30_ALGS_SETTINGS['find_maximum_subarray_kadane'][
-    'num_samples_multiplier'] = 32
-for alg in ['quickselect', 'minimum', 'binary_search', 'naive_string_matcher',
-            'kmp_matcher', 'segments_intersect']:
-  CLRS_30_ALGS_SETTINGS[alg]['num_samples_multiplier'] = 64
+# CLRS_30_ALGS_SETTINGS['find_maximum_subarray_kadane'][
+#     'num_samples_multiplier'] = 32
+# for alg in ['quickselect', 'minimum', 'binary_search', 'naive_string_matcher',
+#             'kmp_matcher', 'segments_intersect']:
+#   CLRS_30_ALGS_SETTINGS[alg]['num_samples_multiplier'] = 64
 
 
 SPECS = types.MappingProxyType({
