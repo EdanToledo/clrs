@@ -34,6 +34,15 @@ _DataFrame = pd.DataFrame
 _Out = Tuple[_Array, _Array, probing.ProbesDict]
 _OutputClass = specs.OutputClass
 
+def change_to_arrows_and_A(adjacency_mat):
+    """ Given an adjacency matrix for a directed graph, returns two matrices:
+    A: nxn matrix where A[i,j] = A[j,i] = 1 if there is any connection between nodes i and j
+    arrows: nxn matrix where A[i,j] = adjacency_mat[i,j]
+    """
+    arrows = adjacency_mat
+    A = adjacency_mat + np.transpose(adjacency_mat)
+    return (A, arrows)
+
 
 def ic_star(X_df: _DataFrame) -> _Out:
     """IC* algorithm using PC alg in step 1
