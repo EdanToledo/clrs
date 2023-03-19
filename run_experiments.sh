@@ -1,9 +1,9 @@
 # navigate to clrs folder first, 
-source /opt/anaconda3/etc/profile.d/conda.sh # for local
-# source /opt/conda/etc/profile.d/conda.sh # for gpu 
+# source /opt/anaconda3/etc/profile.d/conda.sh # for local
+source /opt/conda/etc/profile.d/conda.sh # for gpu 
 
 conda activate causal_gnn
-# XLA_PYTHON_CLIENT_PREALLOCATE=false
+XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 # BASE
