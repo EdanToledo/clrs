@@ -4,7 +4,7 @@
 
 # conda activate causal_gnn
 conda activate gnn
-export XLA_PYTHON_CLIENT_PREALLOCATE = false
+export XLA_PYTHON_CLIENT_PREALLOCATE=false
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 # BASE
