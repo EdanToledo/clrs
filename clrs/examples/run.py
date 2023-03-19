@@ -114,12 +114,12 @@ flags.DEFINE_enum('processor_type', 'triplet_gmpnn',
 
 flags.DEFINE_string('checkpoint_path', '/tmp/CLRS30',
                     'Path in which checkpoints are saved.')
-flags.DEFINE_string('dataset_path', '/tmp/CLRS30',
+flags.DEFINE_string('dataset_path', './',
                     'Path in which dataset is stored.')
 flags.DEFINE_boolean('freeze_processor', False,
                      'Whether to freeze the processor of the model.')
 flags.DEFINE_string('wandb_run_name', 'test', 'wandb run name')
-flags.DEFINE_string('wandb_entity_name', 'edan', 'wandb entity name')
+flags.DEFINE_string('wandb_entity_name', 'relearning', 'wandb entity name')
 flags.DEFINE_string('wandb_project_name', 'causal-gnn', 'wandb project name')
 
 
@@ -155,7 +155,8 @@ def _iterate_sampler(sampler, batch_size):
 
 def _maybe_download_dataset(dataset_path):
   """Download CLRS30 dataset if needed."""
-  dataset_folder = os.path.join(dataset_path, clrs.get_clrs_folder())
+  dataset_folder = dataset_path
+  # dataset_folder = os.path.join(dataset_path, clrs.get_clrs_folder())
   if os.path.isdir(dataset_folder):
     logging.info('Dataset found at %s. Skipping download.', dataset_folder)
     return dataset_folder
@@ -323,7 +324,7 @@ def create_samplers(rng, train_lengths: List[int]):
 
       train_args = dict(sizes=train_lengths,
                         split='train',
-                        batch_size=FLAGS.batch_size,
+                        batch_size= FLAGS.batch_size, 
                         multiplier=1,
                         randomize_pos=FLAGS.random_pos,
                         chunked=FLAGS.chunked_training,

@@ -121,55 +121,55 @@ def ic_star(X_df: _DataFrame) -> _Out:
                         },
                     )
                     break
-    # pos = nx.planar_layout(g)
-    # nx.draw(g, pos, with_labels=True)
-    # plt.show()
+    # # pos = nx.planar_layout(g)
+    # # nx.draw(g, pos, with_labels=True)
+    # # plt.show()
 
-    # Step 2: orient colliders
-    for c in g.nodes():
-        for a, b in itertools.combinations(g.neighbors(c), 2):
-            if not g.has_edge(a, b):
-                S_ab = return_S_ab(separating_sets, a, b)
-                if S_ab != None and c not in S_ab:
-                    a_idx = VAR_NAMES.index(a)
-                    b_idx = VAR_NAMES.index(b)
-                    c_idx = VAR_NAMES.index(c)
-                    # print(a, a_idx)
-                    # print(b, b_idx)
-                    # print(c, c_idx)
-                    # break
+    # # Step 2: orient colliders
+    # for c in g.nodes():
+    #     for a, b in itertools.combinations(g.neighbors(c), 2):
+    #         if not g.has_edge(a, b):
+    #             S_ab = return_S_ab(separating_sets, a, b)
+    #             if S_ab != None and c not in S_ab:
+    #                 a_idx = VAR_NAMES.index(a)
+    #                 b_idx = VAR_NAMES.index(b)
+    #                 c_idx = VAR_NAMES.index(c)
+    #                 # print(a, a_idx)
+    #                 # print(b, b_idx)
+    #                 # print(c, c_idx)
+    #                 # break
 
-                    arrows_mat[a_idx, c_idx] = 1
-                    arrows_mat[b_idx, c_idx] = 1
+    #                 arrows_mat[a_idx, c_idx] = 1
+    #                 arrows_mat[b_idx, c_idx] = 1
 
-                    probing.push(
-                        probes,
-                        specs.Stage.HINT,
-                        next_probe={
-                            "node_1": probing.mask_one(a_idx, NUM_VARS),
-                            "node_2": probing.mask_one(c_idx, NUM_VARS),
-                            "node_3": probing.mask_one(
-                                b_idx, NUM_VARS
-                            ),  # TODO: check if this makes sense
-                            "S_12": probing.mask_set(
-                                [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
-                            ),
-                            "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
-                            "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
-                        },
-                    )
+    #                 probing.push(
+    #                     probes,
+    #                     specs.Stage.HINT,
+    #                     next_probe={
+    #                         "node_1": probing.mask_one(a_idx, NUM_VARS),
+    #                         "node_2": probing.mask_one(c_idx, NUM_VARS),
+    #                         "node_3": probing.mask_one(
+    #                             b_idx, NUM_VARS
+    #                         ),  # TODO: check if this makes sense
+    #                         "S_12": probing.mask_set(
+    #                             [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
+    #                         ),
+    #                         "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
+    #                         "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
+    #                     },
+    #                 )
 
-    # Step 3: recursively adding as many arrows + markings as possible
-    # Follows recursive rules 1 and 2 as detailed in Pearl 2000
-    added_arrows = True
-    while added_arrows:
-        R1_added_arrows = apply_recursion_rule_1(
-            g, probes, arrows_mat, VAR_NAMES, NUM_VARS
-        )
-        R2_added_arrows = apply_recursion_rule_2(
-            g, probes, arrows_mat, VAR_NAMES, NUM_VARS
-        )
-        added_arrows = R1_added_arrows or R2_added_arrows
+    # # Step 3: recursively adding as many arrows + markings as possible
+    # # Follows recursive rules 1 and 2 as detailed in Pearl 2000
+    # added_arrows = True
+    # while added_arrows:
+    #     R1_added_arrows = apply_recursion_rule_1(
+    #         g, probes, arrows_mat, VAR_NAMES, NUM_VARS
+    #     )
+    #     R2_added_arrows = apply_recursion_rule_2(
+    #         g, probes, arrows_mat, VAR_NAMES, NUM_VARS
+    #     )
+    #     added_arrows = R1_added_arrows or R2_added_arrows
 
     A = nx.to_numpy_array(g)
 
