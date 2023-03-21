@@ -87,7 +87,7 @@ flags.DEFINE_float(
 )
 flags.DEFINE_enum(
     "hint_mode",
-    "encoded_decoded",
+    "none",
     ["encoded_decoded", "decoded_only", "none"],
     "How should hints be used? Note, each mode defines a "
     "separate task, with various difficulties. `encoded_decoded` "
@@ -130,7 +130,7 @@ flags.DEFINE_enum(
 )
 flags.DEFINE_enum(
     "processor_type",
-    "deepsets",
+    "mpnn",
     [
         "deepsets",
         "mpnn",
@@ -160,7 +160,7 @@ flags.DEFINE_string("dataset_path", "./", "Path in which dataset is stored.")
 flags.DEFINE_boolean(
     "freeze_processor", False, "Whether to freeze the processor of the model."
 )
-flags.DEFINE_string("wandb_run_name", "test", "wandb run name")
+flags.DEFINE_string("wandb_run_name", "MPNN NO HINTS", "wandb run name")
 flags.DEFINE_string("wandb_entity_name", "relearning", "wandb entity name")
 flags.DEFINE_string("wandb_project_name", "causal-gnn", "wandb project name")
 

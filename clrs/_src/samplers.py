@@ -58,7 +58,7 @@ CLRS30 = types.MappingProxyType({
     },
     'test': {
         'num_samples': 32,
-        'length': 14,
+        'length': 12,
         'seed': 3,
     },
 })
