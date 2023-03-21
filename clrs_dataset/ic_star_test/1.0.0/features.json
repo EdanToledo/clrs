@@ -15,30 +15,10 @@
                     "encoding": "none"
                 }
             },
-            "hint_arrows_h": {
+            "lengths": {
                 "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
                 "tensor": {
-                    "shape": {
-                        "dimensions": [
-                            "65",
-                            "12",
-                            "12",
-                            "3"
-                        ]
-                    },
-                    "dtype": "float64",
-                    "encoding": "none"
-                }
-            },
-            "hint_S_12": {
-                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                "tensor": {
-                    "shape": {
-                        "dimensions": [
-                            "65",
-                            "12"
-                        ]
-                    },
+                    "shape": {},
                     "dtype": "float64",
                     "encoding": "none"
                 }
@@ -75,7 +55,7 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "65",
+                            "64",
                             "12",
                             "12"
                         ]
@@ -84,10 +64,17 @@
                     "encoding": "none"
                 }
             },
-            "lengths": {
+            "hint_arrows_h": {
                 "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
                 "tensor": {
-                    "shape": {},
+                    "shape": {
+                        "dimensions": [
+                            "64",
+                            "12",
+                            "12",
+                            "3"
+                        ]
+                    },
                     "dtype": "float64",
                     "encoding": "none"
                 }
@@ -97,7 +84,7 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "65",
+                            "64",
                             "12"
                         ]
                     },
@@ -110,7 +97,7 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "65",
+                            "64",
                             "12"
                         ]
                     },
@@ -123,7 +110,20 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "65",
+                            "64",
+                            "12"
+                        ]
+                    },
+                    "dtype": "float64",
+                    "encoding": "none"
+                }
+            },
+            "hint_S_12": {
+                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
+                "tensor": {
+                    "shape": {
+                        "dimensions": [
+                            "64",
                             "12"
                         ]
                     },

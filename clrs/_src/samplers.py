@@ -53,7 +53,7 @@ CLRS30 = types.MappingProxyType({
     },
     'val': {
         'num_samples': 32,
-        'length': 6,
+        'length': 8,
         'seed': 2,
     },
     'test': {
@@ -639,14 +639,15 @@ class CausalDataSampler(Sampler):
   def _sample_data(
       self,
       length: int,
-      p: Tuple[float, ...] = (0.5,),
+      p: Tuple[float, ...] = (0.3,),
       low: float = 0.,
-      high: float = 1.,
+      high: float = 10.,
   ):
     
     # Currently we dont use a lot of these returned values but this may change
     # TODO : currently hardcoded the binomial dist stuff and the amount of data sampled
     (
+        self._rng, 
         adjacency_mat,
         weighted_mat,
         exogenous_nodes,
@@ -655,6 +656,7 @@ class CausalDataSampler(Sampler):
         scm
     ) = _random_causal_graph(
         nb_nodes=length,
+        _rng=self._rng,
         p=self._rng.choice(p),
         low=low,
         high=high,
@@ -662,7 +664,10 @@ class CausalDataSampler(Sampler):
         binomial_probability=0.5
     )
 
+    # scm.cgm.draw().view()
+    # print(scm)
     df = scm.sample(60)
+    
 
     return [df]
 

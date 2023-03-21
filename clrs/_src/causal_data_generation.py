@@ -61,7 +61,7 @@ def visualise_graph(adjacency_matrix, weighted_matrix, node_labels=None):
     plt.show()
 
 
-def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0, noise=0.05, binomial_exogenous_variables = True, binomial_probability = 0.6, _rng = np.random.RandomState(42)):
+def _random_causal_graph(nb_nodes, _rng, p=0.5, low=0.0, high=1.0, noise=0.05, binomial_exogenous_variables = True, binomial_probability = 0.6):
     """Generate a random causal graph and SCM.
 
     Args:
@@ -155,7 +155,7 @@ def _random_causal_graph(nb_nodes, p=0.5, low=0.0, high=1.0, noise=0.05, binomia
 
     scm = StructuralCausalModel({**exogenous_nodes_scm, **endogenous_nodes_scm})
 
-    return adjacency_mat, weighted_mat, exogenous_nodes, endogenous_nodes, outcome_nodes[0], scm
+    return _rng, adjacency_mat, weighted_mat, exogenous_nodes, endogenous_nodes, outcome_nodes[0], scm
 
 
 def test_causal_data_generation(nb_nodes, low=0.0, high=1.0, p=[0.1, 0.2, 0.3, 0.5]):
