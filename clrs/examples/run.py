@@ -33,7 +33,7 @@ import tensorflow as tf
 flags.DEFINE_list("algorithms", ["ic_star"], "Which algorithms to run.")
 flags.DEFINE_list(
     "train_lengths",
-    ["4", "5", "6", "7"],
+    ["3", "4", "5", "6", "7", "8"],
     "Which training sizes to use. A size of -1 means " "use the benchmark dataset.",
 )
 flags.DEFINE_integer(
@@ -55,7 +55,7 @@ flags.DEFINE_boolean(
     "enforce_permutations", False, "Whether to enforce permutation-type node pointers."
 )
 flags.DEFINE_boolean(
-    "enforce_pred_as_input", True, "Whether to change pred_h hints into pred inputs."
+    "enforce_pred_as_input", False, "Whether to change pred_h hints into pred inputs."
 )
 flags.DEFINE_integer("batch_size", 32, "Batch size used for training.")
 flags.DEFINE_boolean("chunked_training", False, "Whether to use chunking for training.")
@@ -80,14 +80,14 @@ flags.DEFINE_float(
 flags.DEFINE_float("dropout_prob", 0.0, "Dropout rate to use.")
 flags.DEFINE_float(
     "hint_teacher_forcing",
-    0.3, 
+    0.0, 
     "Probability that ground-truth teacher hints are encoded "
     "during training instead of predicted hints. Only "
     "pertinent in encoded_decoded modes.",
 )
 flags.DEFINE_enum(
     "hint_mode",
-    "decoded_only",
+    "encoded_decoded",
     ["encoded_decoded", "decoded_only", "none"],
     "How should hints be used? Note, each mode defines a "
     "separate task, with various difficulties. `encoded_decoded` "
@@ -401,7 +401,7 @@ def create_samplers(rng, train_lengths: List[int]):
             )
             val_sampler, val_samples, spec = make_multi_sampler(**val_args)
 
-            # TODO (edan) : change test args sizes back to [-1]
+            
             test_args = dict(
                 sizes=[-1],
                 split="test",
