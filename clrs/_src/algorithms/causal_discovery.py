@@ -44,7 +44,7 @@ def change_to_arrows_and_A(adjacency_mat):
     return (A, arrows)
 
 
-def ic_star(X_df: _DataFrame) -> _Out:
+def ic_star(X_df: _DataFrame, ground_truth: _Array) -> _Out:
     """IC* algorithm using PC alg in step 1
     X is the NUM_SAMPLES x NUM_VARS array of observations derived from an SCM
     """
@@ -181,6 +181,8 @@ def ic_star(X_df: _DataFrame) -> _Out:
         added_arrows = R1_added_arrows or R2_added_arrows
 
     A = nx.to_numpy_array(g)
+
+    (A, arrows_mat) = change_to_arrows_and_A(ground_truth)
 
     probing.push(
         probes,

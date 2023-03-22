@@ -669,7 +669,7 @@ class CausalDataSampler(Sampler):
     df = scm.sample(60)
     
 
-    return [df]
+    return [df, adjacency_mat]
 
 
 SAMPLERS = {

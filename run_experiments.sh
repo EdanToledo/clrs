@@ -1,53 +1,27 @@
-source /home/edantoledo/tests/clrs/venv_clrs/bin/activate
+# NO HINTS
 
-# BASE
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.0 --hint_mode none --processor_type mpnn --wandb_run_name mpnn_base
+# python ./clrs/examples/run.py --processor_type mpnn --wandb_run_name "MPNN NO HINTS GROUNDTRUTH"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.0 --hint_mode none --processor_type gatv2 --wandb_run_name gatv2_base
+# python ./clrs/examples/run.py --processor_type pgn --wandb_run_name "PGN NO HINTS GROUNDTRUTH"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.0 --hint_mode none --processor_type deepsets --wandb_run_name deepsets_base
+# python ./clrs/examples/run.py --processor_type gatv2 --wandb_run_name "GATv2 NO HINTS GROUNDTRUTH"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.0 --hint_mode none --processor_type pgn --wandb_run_name pgn_base
+# # HINTS - DECODED ONLY
 
-# With Hints
+# python ./clrs/examples/run.py --hint_mode decoded_only --processor_type deepsets --wandb_run_name "DEEP SETS GROUNDTRUTH DECODED ONLY"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.0 --hint_mode encoded_decoded --processor_type mpnn --wandb_run_name mpnn_base_w_hints
+# python ./clrs/examples/run.py --hint_mode decoded_only --processor_type mpnn --wandb_run_name "MPNN GROUNDTRUTH DECODED ONLY"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.0 --hint_mode encoded_decoded --processor_type gatv2 --wandb_run_name gatv2_base_w_hints
+# python ./clrs/examples/run.py --hint_mode decoded_only--processor_type pgn --wandb_run_name "PGN GROUNDTRUTH DECODED ONLY"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.0 --hint_mode encoded_decoded --processor_type deepsets --wandb_run_name deepsets_base_w_hints
+# python ./clrs/examples/run.py --hint_mode decoded_only --processor_type gatv2 --wandb_run_name "GATv2 GROUNDTRUTH DECODED ONLY"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.0 --hint_mode encoded_decoded --processor_type pgn --wandb_run_name pgn_base_w_hints
+# # HINTS - ENCODED_DECODED
 
-# With Teacher Forcing 0.3
+# python ./clrs/examples/run.py --hint_mode encoded_decoded --processor_type deepsets --wandb_run_name "DEEP SETS GROUNDTRUTH ENCODED-DECODED"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.3 --hint_mode encoded_decoded --processor_type mpnn --wandb_run_name mpnn_w_tf_3
+# python ./clrs/examples/run.py --hint_mode encoded_decoded --processor_type mpnn --wandb_run_name "MPNN GROUNDTRUTH ENCODED-DECODED"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.3 --hint_mode encoded_decoded --processor_type gatv2 --wandb_run_name gatv2_w_tf_3
+python ./clrs/examples/run.py --hint_mode encoded_decoded --processor_type pgn --wandb_run_name "PGN GROUNDTRUTH ENCODED-DECODED"
 
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.3 --hint_mode encoded_decoded --processor_type deepsets --wandb_run_name deepsets_w_tf_3
-
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.3 --hint_mode encoded_decoded --processor_type pgn --wandb_run_name pgn_w_tf_3
-
-# With Teacher Forcing 0.7
-
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.7 --hint_mode encoded_decoded --processor_type mpnn --wandb_run_name mpnn_w_tf_7
-
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.7 --hint_mode encoded_decoded --processor_type gatv2 --wandb_run_name gatv2_w_tf_7
-
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.7 --hint_mode encoded_decoded --processor_type deepsets --wandb_run_name deepsets_w_tf_7
-
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 0.7 --hint_mode encoded_decoded --processor_type pgn --wandb_run_name pgn_w_tf_7
-
-
-# With Teacher Forcing 1.0
-
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 1.0 --hint_mode encoded_decoded --processor_type mpnn --wandb_run_name mpnn_w_tf_1
-
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 1.0 --hint_mode encoded_decoded --processor_type gatv2 --wandb_run_name gatv2_w_tf_1
-
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 1.0 --hint_mode encoded_decoded --processor_type deepsets --wandb_run_name deepsets_w_tf_1
-
-python /home/edantoledo/tests/clrs/clrs/examples/run.py --hint_teacher_forcing 1.0 --hint_mode encoded_decoded --processor_type pgn --wandb_run_name pgn_w_tf_1
-
-
+python ./clrs/examples/run.py --hint_mode encoded_decoded --processor_type gatv2 --wandb_run_name "GATv2 GROUNDTRUTH ENCODED-DECODED"

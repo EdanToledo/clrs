@@ -10,7 +10,7 @@
     {
       "filepathTemplate": "{DATASET}-{SPLIT}.{FILEFORMAT}-{SHARD_X_OF_Y}",
       "name": "test",
-      "numBytes": "5285696",
+      "numBytes": "5205824",
       "shardLengths": [
         "32"
       ]

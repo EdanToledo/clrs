@@ -55,7 +55,7 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "64",
+                            "63",
                             "12",
                             "12"
                         ]
@@ -69,7 +69,7 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "64",
+                            "63",
                             "12",
                             "12",
                             "3"
@@ -84,7 +84,7 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "64",
+                            "63",
                             "12"
                         ]
                     },
@@ -97,7 +97,7 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "64",
+                            "63",
                             "12"
                         ]
                     },
@@ -110,7 +110,7 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "64",
+                            "63",
                             "12"
                         ]
                     },
@@ -123,7 +123,7 @@
                 "tensor": {
                     "shape": {
                         "dimensions": [
-                            "64",
+                            "63",
                             "12"
                         ]
                     },

@@ -130,17 +130,17 @@ flags.DEFINE_enum(
 )
 flags.DEFINE_enum(
     "processor_type",
-    "mpnn",
+    "deepsets",
     [
         "deepsets",
         "mpnn",
         "pgn",
+        "gatv2",
         "pgn_mask",
         "triplet_mpnn",
         "triplet_pgn",
         "triplet_pgn_mask",
         "gat",
-        "gatv2",
         "gat_full",
         "gatv2_full",
         "gpgn",
@@ -160,7 +160,7 @@ flags.DEFINE_string("dataset_path", "./", "Path in which dataset is stored.")
 flags.DEFINE_boolean(
     "freeze_processor", False, "Whether to freeze the processor of the model."
 )
-flags.DEFINE_string("wandb_run_name", "MPNN NO HINTS", "wandb run name")
+flags.DEFINE_string("wandb_run_name", "DEEP SETS NO HINTS GROUNDTRUTH", "wandb run name")
 flags.DEFINE_string("wandb_entity_name", "relearning", "wandb entity name")
 flags.DEFINE_string("wandb_project_name", "causal-gnn", "wandb project name")
 
