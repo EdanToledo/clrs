@@ -33,7 +33,7 @@ import tensorflow as tf
 flags.DEFINE_list("algorithms", ["ic_star"], "Which algorithms to run.")
 flags.DEFINE_list(
     "train_lengths",
-    ["3", "4", "5", "6", "7", "8"],
+    ["3"],
     "Which training sizes to use. A size of -1 means " "use the benchmark dataset.",
 )
 flags.DEFINE_integer(
@@ -154,13 +154,13 @@ flags.DEFINE_enum(
 )
 
 flags.DEFINE_string(
-    "checkpoint_path", "/tmp/CLRS30", "Path in which checkpoints are saved."
+    "checkpoint_path", "./model_checkpoints/", "Path in which checkpoints are saved."
 )
 flags.DEFINE_string("dataset_path", "./", "Path in which dataset is stored.")
 flags.DEFINE_boolean(
     "freeze_processor", False, "Whether to freeze the processor of the model."
 )
-flags.DEFINE_string("wandb_run_name", "DEEP SETS NO HINTS GROUNDTRUTH", "wandb run name")
+flags.DEFINE_string("wandb_run_name", "TEST", "wandb run name")
 flags.DEFINE_string("wandb_entity_name", "relearning", "wandb entity name")
 flags.DEFINE_string("wandb_project_name", "causal-gnn", "wandb project name")
 

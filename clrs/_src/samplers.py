@@ -52,7 +52,7 @@ CLRS30 = types.MappingProxyType({
         'seed': 1,
     },
     'val': {
-        'num_samples': 32,
+        'num_samples': 64,
         'length': 8,
         'seed': 2,
     },
@@ -641,7 +641,7 @@ class CausalDataSampler(Sampler):
       length: int,
       p: Tuple[float, ...] = (0.3,),
       low: float = 0.,
-      high: float = 10.,
+      high: float = 5.,
   ):
     
     # Currently we dont use a lot of these returned values but this may change
