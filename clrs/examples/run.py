@@ -164,6 +164,8 @@ flags.DEFINE_string("wandb_run_name", "DEEP SETS NO HINTS GROUNDTRUTH", "wandb r
 flags.DEFINE_string("wandb_entity_name", "relearning", "wandb entity name")
 flags.DEFINE_string("wandb_project_name", "causal-gnn", "wandb project name")
 
+flags.DEFINE_string("checkpoint_model_name", "best.pkl", "Name of the model's checkpoint")
+
 
 FLAGS = flags.FLAGS
 
@@ -649,7 +651,7 @@ def main(unused_argv):
             if (sum(val_scores) > best_score) or step == 0:
                 best_score = sum(val_scores)
                 logging.info("Checkpointing best model, %s", msg)
-                train_model.save_model("best.pkl")
+                train_model.save_model(FLAGS.checkpoint_model_name)
             else:
                 logging.info("Not saving new best model, %s", msg)
 
@@ -657,7 +659,7 @@ def main(unused_argv):
         length_idx = (length_idx + 1) % len(train_lengths)
 
     logging.info("Restoring best model from checkpoint...")
-    eval_model.restore_model("best.pkl", only_load_processor=False)
+    eval_model.restore_model(FLAGS.checkpoint_model_name, only_load_processor=False)
 
     for algo_idx in range(len(train_samplers)):
         common_extras = {
