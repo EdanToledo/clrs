@@ -154,13 +154,13 @@ flags.DEFINE_enum(
 )
 
 flags.DEFINE_string(
-    "checkpoint_path", "/tmp/CLRS30", "Path in which checkpoints are saved."
+    "checkpoint_path", "./tmp/CLRS30", "Path in which checkpoints are saved."
 )
 flags.DEFINE_string("dataset_path", "./", "Path in which dataset is stored.")
 flags.DEFINE_boolean(
     "freeze_processor", False, "Whether to freeze the processor of the model."
 )
-flags.DEFINE_string("wandb_run_name", "MPNN NO HINTS", "wandb run name")
+flags.DEFINE_string("wandb_run_name", "test", "wandb run name")
 flags.DEFINE_string("wandb_entity_name", "relearning", "wandb entity name")
 flags.DEFINE_string("wandb_project_name", "causal-gnn", "wandb project name")
 
@@ -403,7 +403,7 @@ def create_samplers(rng, train_lengths: List[int]):
 
             
             test_args = dict(
-                sizes=[-1],
+                sizes= [12],# [-1], TODO: try to get tfds working (change from 3.10 to 3.9 python version)
                 split="test",
                 batch_size=32,
                 multiplier=2 * mult,

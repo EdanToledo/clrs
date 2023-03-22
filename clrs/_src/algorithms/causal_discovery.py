@@ -78,9 +78,10 @@ def ic_star(X_df: _DataFrame) -> _Out:
         probes,
         specs.Stage.HINT,
         next_probe={
-            "node_1": np.zeros(NUM_VARS),
-            "node_2": np.zeros(NUM_VARS),
-            "node_3": np.zeros(NUM_VARS),
+            # "node_1": np.zeros(NUM_VARS),
+            # "node_2": np.zeros(NUM_VARS),
+            # "node_3": np.zeros(NUM_VARS),
+            'nodes': np.zeros(NUM_VARS),
             "S_12": np.zeros(NUM_VARS),
             "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
             "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
@@ -119,9 +120,12 @@ def ic_star(X_df: _DataFrame) -> _Out:
                         probes,
                         specs.Stage.HINT,
                         next_probe={
-                            "node_1": probing.mask_one(VAR_NAMES.index(a), NUM_VARS),
-                            "node_2": probing.mask_one(VAR_NAMES.index(b), NUM_VARS),
-                            "node_3": np.zeros(NUM_VARS),
+                            # "node_1": probing.mask_one(VAR_NAMES.index(a), NUM_VARS),
+                            # "node_2": probing.mask_one(VAR_NAMES.index(b), NUM_VARS),
+                            # "node_3": np.zeros(NUM_VARS),
+                            'nodes': probing.mask_set(
+                                [VAR_NAMES.index(a), VAR_NAMES.index(b)], NUM_VARS
+                            ),
                             "S_12": probing.mask_set(
                                 [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
                             ),
@@ -155,11 +159,14 @@ def ic_star(X_df: _DataFrame) -> _Out:
                         probes,
                         specs.Stage.HINT,
                         next_probe={
-                            "node_1": probing.mask_one(a_idx, NUM_VARS),
-                            "node_2": probing.mask_one(c_idx, NUM_VARS),
-                            "node_3": probing.mask_one(
-                                b_idx, NUM_VARS
-                            ),  # TODO: check if this makes sense
+                            # "node_1": probing.mask_one(a_idx, NUM_VARS),
+                            # "node_2": probing.mask_one(c_idx, NUM_VARS),
+                            # "node_3": probing.mask_one(
+                            #     b_idx, NUM_VARS
+                            # ),  # TODO: check if this makes sense
+                            'nodes': probing.mask_set(
+                                [a_idx, b_idx, c_idx], NUM_VARS
+                            ),
                             "S_12": probing.mask_set(
                                 [VAR_NAMES.index(node) for node in list(S_ab)], NUM_VARS
                             ),
@@ -231,11 +238,14 @@ def apply_recursion_rule_1(g, probes, arrows_mat, VAR_NAMES, NUM_VARS):
                         probes,
                         specs.Stage.HINT,
                         next_probe={
-                            "node_1": probing.mask_one(VAR_NAMES.index(c), NUM_VARS),
-                            "node_2": probing.mask_one(VAR_NAMES.index(b), NUM_VARS),
-                            "node_3": probing.mask_one(
-                                VAR_NAMES.index(a), NUM_VARS
-                            ),  # TODO: check if this is the right ordering
+                            # "node_1": probing.mask_one(VAR_NAMES.index(c), NUM_VARS),
+                            # "node_2": probing.mask_one(VAR_NAMES.index(b), NUM_VARS),
+                            # "node_3": probing.mask_one(
+                            #     VAR_NAMES.index(a), NUM_VARS
+                            # ),  # TODO: check if this is the right ordering
+                            'nodes': probing.mask_set(
+                                [a_idx, b_idx, c_idx], NUM_VARS
+                            ),
                             "S_12": np.zeros(NUM_VARS),
                             "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
                             "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
@@ -254,11 +264,14 @@ def apply_recursion_rule_1(g, probes, arrows_mat, VAR_NAMES, NUM_VARS):
                         probes,
                         specs.Stage.HINT,
                         next_probe={
-                            "node_1": probing.mask_one(VAR_NAMES.index(c), NUM_VARS),
-                            "node_2": probing.mask_one(VAR_NAMES.index(a), NUM_VARS),
-                            "node_3": probing.mask_one(
-                                VAR_NAMES.index(b), NUM_VARS
-                            ),  # TODO: check if this is the right ordering
+                            # "node_1": probing.mask_one(VAR_NAMES.index(c), NUM_VARS),
+                            # "node_2": probing.mask_one(VAR_NAMES.index(a), NUM_VARS),
+                            # "node_3": probing.mask_one(
+                            #     VAR_NAMES.index(b), NUM_VARS
+                            # ),  # TODO: check if this is the right ordering
+                            'nodes': probing.mask_set(
+                                [a_idx, b_idx, c_idx], NUM_VARS
+                            ),
                             "S_12": np.zeros(NUM_VARS),
                             "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
                             "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3),
@@ -283,9 +296,12 @@ def apply_recursion_rule_2(g, probes, arrows_mat, VAR_NAMES, NUM_VARS):
                     probes,
                     specs.Stage.HINT,
                     next_probe={
-                        "node_1": probing.mask_one(VAR_NAMES.index(a), NUM_VARS),
-                        "node_2": probing.mask_one(VAR_NAMES.index(b), NUM_VARS),
-                        "node_3": np.zeros(NUM_VARS),
+                        # "node_1": probing.mask_one(VAR_NAMES.index(a), NUM_VARS),
+                        # "node_2": probing.mask_one(VAR_NAMES.index(b), NUM_VARS),
+                        # "node_3": np.zeros(NUM_VARS),
+                        'nodes': probing.mask_set(
+                            [a_idx, b_idx], NUM_VARS
+                        ),
                         "S_12": np.zeros(NUM_VARS),
                         "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
                         "arrows_h": probing.arrows_probe(np.copy(arrows_mat),3),
@@ -300,9 +316,12 @@ def apply_recursion_rule_2(g, probes, arrows_mat, VAR_NAMES, NUM_VARS):
                     probes,
                     specs.Stage.HINT,
                     next_probe={
-                        "node_1": probing.mask_one(VAR_NAMES.index(b), NUM_VARS),
-                        "node_2": probing.mask_one(VAR_NAMES.index(a), NUM_VARS),
-                        "node_3": np.zeros(NUM_VARS),
+                        # "node_1": probing.mask_one(VAR_NAMES.index(b), NUM_VARS),
+                        # "node_2": probing.mask_one(VAR_NAMES.index(a), NUM_VARS),
+                        # "node_3": np.zeros(NUM_VARS),
+                        'nodes': probing.mask_set(
+                            [a_idx, b_idx], NUM_VARS
+                        ),
                         "S_12": np.zeros(NUM_VARS),
                         "A_h": probing.graph(np.copy(nx.to_numpy_array(g))),
                         "arrows_h": probing.arrows_probe(np.copy(arrows_mat), 3 ),

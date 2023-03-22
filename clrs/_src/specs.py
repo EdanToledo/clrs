@@ -122,10 +122,11 @@ SPECS = types.MappingProxyType({
         'arrows':   (Stage.OUTPUT, Location.EDGE, Type.CATEGORICAL),    # output: arrow information as defined in Pearl 2000
         'A_h':      (Stage.HINT, Location.EDGE, Type.MASK),             # hint: intermediate adjacency matrix (without arrows)
         'arrows_h': (Stage.HINT, Location.EDGE, Type.CATEGORICAL),      # hint: intermediate arrow matrix
-        'node_1':   (Stage.HINT, Location.NODE, Type.MASK),             # hint: representing node_1 of the edge you're fiddling with
-        'node_2':   (Stage.HINT, Location.NODE, Type.MASK),             # hint: representing node_2 of the edge you're fiddling with
-        'node_3':   (Stage.HINT, Location.NODE, Type.MASK),             # hint: a third node of interest -- useful in step 2 and R1
+        # 'node_1':   (Stage.HINT, Location.NODE, Type.MASK),             # hint: representing node_1 of the edge you're fiddling with
+        # 'node_2':   (Stage.HINT, Location.NODE, Type.MASK),             # hint: representing node_2 of the edge you're fiddling with
+        # 'node_3':   (Stage.HINT, Location.NODE, Type.MASK),             # hint: a third node of interest -- useful in step 2 and R1
         'S_12':     (Stage.HINT, Location.NODE, Type.MASK),             # hint: separating set for nodes 1 and 2 -- useful in steps 1 and 2
+        'nodes':    (Stage.HINT, Location.NODE, Type.MASK),             # hint: nodes examined at each step
     },
     # the rest is as existed in original clrs folder - SZ
     'insertion_sort': {
