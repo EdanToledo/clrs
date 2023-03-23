@@ -158,6 +158,7 @@ def _evaluate(truth, pred, idx=None, lengths=None):
 
 
 def _eval_one(pred, truth):
+  # import ipdb; ipdb.set_trace()
   mask = np.all(truth != specs.OutputClass.MASKED, axis=-1)
   return np.sum(
       (np.argmax(pred, -1) == np.argmax(truth, -1)) * mask) / np.sum(mask)

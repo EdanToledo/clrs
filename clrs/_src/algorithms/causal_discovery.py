@@ -26,7 +26,9 @@ from causality.inference.search import IC
 from causality.inference.independence_tests import RobustRegressionTest
 from clrs._src.causal_data_generation import _random_causal_graph
 
-# SZ comments: imports are a lil whack but the code works rn
+import jax
+from clrs._src.evaluation import _eval_one, _mask_fn
+import time
 
 
 _Array = np.ndarray
@@ -182,6 +184,9 @@ def ic_star(X_df: _DataFrame, ground_truth: _Array) -> _Out:
 
     A = nx.to_numpy_array(g)
 
+    A_ic_star = np.copy(A)
+    arrows_mat_ic_star = np.copy(arrows_mat)
+
     (A, arrows_mat) = change_to_arrows_and_A(ground_truth)
 
     probing.push(
@@ -193,9 +198,10 @@ def ic_star(X_df: _DataFrame, ground_truth: _Array) -> _Out:
         },
     )
 
-    probing.finalize(probes)
+    probing.finalize(probes) # NOTE: this captures the groundtruth outputs still 
+    return (A_ic_star, arrows_mat_ic_star), probes
 
-    return (A, arrows_mat), probes
+    # return (A, arrows_mat), probes
 
 
 # ---- helper functions --
@@ -331,81 +337,151 @@ def marked_directed_path(g, a, b, arrows_mat, VAR_NAMES):
 
 
 if __name__ == "__main__":
-    # for testing example 1
-    print("Example 1: Example from Pearl 2000")
-    SIZE = 2000
-    x0 = np.random.normal(size=SIZE)
-    x1 = x0 + np.random.normal(size=SIZE)
-    x2 = x0 + np.random.normal(size=SIZE)
-    x3 = x1 + x2 + np.random.normal(size=SIZE)
-    x4 = x3 + np.random.normal(size=SIZE)
-    X = np.transpose(np.vstack((x0, x1, x2, x3, x4)))
-    X_df = pd.DataFrame(data=X, columns=[f"x{i}" for i in range(5)])
+    # # for testing example 1
+    # print("Example 1: Example from Pearl 2000")
+    # SIZE = 2000
+    # x0 = np.random.normal(size=SIZE)
+    # x1 = x0 + np.random.normal(size=SIZE)
+    # x2 = x0 + np.random.normal(size=SIZE)
+    # x3 = x1 + x2 + np.random.normal(size=SIZE)
+    # x4 = x3 + np.random.normal(size=SIZE)
+    # X = np.transpose(np.vstack((x0, x1, x2, x3, x4)))
+    # X_df = pd.DataFrame(data=X, columns=[f"x{i}" for i in range(5)])
 
-    (adj_mat, arrows_mat), probes = ic_star(X_df)
-    print(f"Variables: {X_df.columns.sort_values()}")
-    print(f"Adjacency matrix:\n{adj_mat}")
-    print(f"Arrows matrix:\n{arrows_mat}")
+    # adjacency_ground_truth = np.array([
+    #     [0, 1, 1, 0, 0],
+    #     [0, 0, 0, 1, 0],
+    #     [0, 0, 0, 1, 0],
+    #     [0, 0, 0, 0, 1],
+    #     [0, 0, 0, 0, 0]
+    #     ])
 
-    # TODO: take the above and convert it to a nx graph
+    # (adj_mat, arrows_mat), probes = ic_star(X_df, adjacency_ground_truth)
+    # print(f"Variables: {X_df.columns.sort_values()}")
+    # print(f"Adjacency matrix:\n{adj_mat}")
+    # print(f"Arrows matrix:\n{arrows_mat}")
 
-    # compare with IC algorithm <- should be the same
-    variable_types = {f"x{i}": "c" for i in range(X_df.shape[1])}
-    graph_comp = IC(RobustRegressionTest).search(X_df, variable_types)
-    for i, j in graph_comp.edges():
-        print(i, j, graph_comp.get_edge_data(i, j))
+    # # TODO: take the above and convert it to a nx graph
 
-    # pos = nx.planar_layout(graph_comp)
-    # nx.draw(graph_comp, pos, with_labels=True)
+    # # compare with IC algorithm <- should be the same
+    # variable_types = {f"x{i}": "c" for i in range(X_df.shape[1])}
+    # graph_comp = IC(RobustRegressionTest).search(X_df, variable_types)
+    # for i, j in graph_comp.edges():
+    #     print(i, j, graph_comp.get_edge_data(i, j))
+
+    # # pos = nx.planar_layout(graph_comp)
+    # # nx.draw(graph_comp, pos, with_labels=True)
+    # # plt.show()
+
+    # print("####################")
+    # ##################
+    # # testing example 2:
+    # print("Example 2: Randomly generated graph")
+    # NUM_VARS = 5
+    # rng = np.random.RandomState(42)
+    results = {}
+    sizes = [20] #[3,4,5, 6, 7, 8, 12]
+    rng = np.random.RandomState(42)
+    rng_key = jax.random.PRNGKey(rng.randint(2**32))
+    for size in sizes:
+        size_results = {
+            'A_scores': [],
+            'arrows_scores': [],
+        }
+        start_time = time.time()
+        for i in range(500):
+            (
+                rng, 
+                adjacency_mat,
+                weighted_mat,
+                exogenous_nodes,
+                endogenous_nodes,
+                outcome_nodes,
+                scm
+            ) = _random_causal_graph(
+                nb_nodes=size,
+                _rng=rng,
+                p=rng.choice((0.3,)),
+                low=0,
+                high=10,
+                binomial_exogenous_variables=False,
+                binomial_probability=0.5
+            )
+
+            # scm.cgm.draw().view()
+            # print(scm)
+            df = scm.sample(60)
+            (A, arrows_mat) = change_to_arrows_and_A(adjacency_mat)
+            (A_ic_star, arrows_mat_ic_star), _ = ic_star(df, adjacency_mat)
+            # print(A - A_ic_star)
+            # print(arrows_mat - arrows_mat_ic_star)
+
+            # A = probing.arrows_probe(np.copy(A), 2)
+            A = probing.graph(np.copy(A))
+            arrows_mat = probing.arrows_probe(np.copy(arrows_mat), 3)
+
+            # A_ic_star = probing.arrows_probe(np.copy(A_ic_star), 2)
+            A_ic_star = probing.graph(np.copy(A_ic_star))
+            arrows_mat_ic_star = probing.arrows_probe(np.copy(arrows_mat_ic_star), 3)
+
+            size_results['A_scores'].append(_mask_fn(A, A_ic_star))
+            size_results['arrows_scores'].append(_eval_one(arrows_mat, arrows_mat_ic_star))
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f'Elapsed time: {elapsed_time:.2f} seconds')
+        print(size)
+        print(len(size_results['A_scores']))
+        results[str(size)] = {
+                'avg_A_score' : np.mean(size_results['A_scores']),
+                'avg_arrows_score': np.mean(size_results['arrows_scores']),
+            }
+        print(results)
+    np.save("results_both_categorical_eval_one.npy", results)
+    
+    ################
+    # (
+    #     rng,
+    #     adjacency_mat,
+    #     weighted_mat,
+    #     exogenous_nodes,
+    #     endogenous_nodes,
+    #     outcome_nodes,
+    #     scm,
+    # ) = _random_causal_graph(
+    #     nb_nodes=NUM_VARS,
+    #     _rng=rng,
+    #     p=0.3,
+    #     low=0.0,
+    #     high=5.0,
+    #     binomial_exogenous_variables=False,
+    #     binomial_probability=0.6,
+    # )
+    # SIZE = 10_000
+    # X_df_2 = scm.sample(SIZE)
+
+    # scm.cgm.draw().view()
+
+    # (adj_mat_2, arrows_mat_2), probes_2 = ic_star(X_df_2, adjacency_mat)
+    # print(f"Variables: {X_df_2.columns.sort_values()}")
+    # print(f"Adjacency matrix:\n{adj_mat_2}")
+    # print(f"Arrows matrix:\n{arrows_mat_2}")
+    # ic_star_graph_2 = nx.from_numpy_array(adj_mat_2)
+    # pos = graphviz_layout(ic_star_graph_2, prog="dot")
+    # fig = plt.figure()
+    # plt.title("IC Star Graph")
+    # nx.draw(ic_star_graph_2, pos)
+    # labels = {i: f"x{i}" for i in range(len(adj_mat_2))}
+    # nx.draw_networkx_labels(ic_star_graph_2, pos, labels)
+
+    # # something is buggy right here
+    # variable_types_2 = {name: "c" for name in X_df_2.columns}
+    # graph_comp_2 = IC(RobustRegressionTest).search(X_df_2, variable_types_2)
+    # for i, j in graph_comp_2.edges():
+    #     print(i, j, graph_comp_2.get_edge_data(i, j))
+
+    # pos = graphviz_layout(graph_comp_2, prog="dot")
+    # fig = plt.figure()
+    # plt.title("IC Graph")
+    # nx.draw(graph_comp_2, pos, with_labels=True)
+
     # plt.show()
-
-    print("####################")
-    ##################
-    # testing example 2:
-    print("Example 2: Randomly generated graph")
-    NUM_VARS = 5
-
-    (
-        adjacency_mat,
-        weighted_mat,
-        exogenous_nodes,
-        endogenous_nodes,
-        outcome_nodes,
-        scm,
-    ) = _random_causal_graph(
-        nb_nodes=NUM_VARS,
-        p=0.3,
-        low=0.0,
-        high=5.0,
-        binomial_exogenous_variables=False,
-        binomial_probability=0.6,
-    )
-    SIZE = 10_000
-    X_df_2 = scm.sample(SIZE)
-
-    scm.cgm.draw().view()
-
-    (adj_mat_2, arrows_mat_2), probes_2 = ic_star(X_df_2)
-    print(f"Variables: {X_df_2.columns.sort_values()}")
-    print(f"Adjacency matrix:\n{adj_mat_2}")
-    print(f"Arrows matrix:\n{arrows_mat_2}")
-    ic_star_graph_2 = nx.from_numpy_array(adj_mat_2)
-    pos = graphviz_layout(ic_star_graph_2, prog="dot")
-    fig = plt.figure()
-    plt.title("IC Star Graph")
-    nx.draw(ic_star_graph_2, pos)
-    labels = {i: f"x{i}" for i in range(len(adj_mat_2))}
-    nx.draw_networkx_labels(ic_star_graph_2, pos, labels)
-
-    # something is buggy right here
-    variable_types_2 = {name: "c" for name in X_df_2.columns}
-    graph_comp_2 = IC(RobustRegressionTest).search(X_df_2, variable_types_2)
-    for i, j in graph_comp_2.edges():
-        print(i, j, graph_comp_2.get_edge_data(i, j))
-
-    pos = graphviz_layout(graph_comp_2, prog="dot")
-    fig = plt.figure()
-    plt.title("IC Graph")
-    nx.draw(graph_comp_2, pos, with_labels=True)
-
-    plt.show()

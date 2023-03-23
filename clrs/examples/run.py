@@ -130,17 +130,17 @@ flags.DEFINE_enum(
 )
 flags.DEFINE_enum(
     "processor_type",
-    "deepsets",
+    "mpnn",
     [
         "deepsets",
         "mpnn",
         "pgn",
-        "gatv2",
         "pgn_mask",
         "triplet_mpnn",
         "triplet_pgn",
         "triplet_pgn_mask",
         "gat",
+        "gatv2",
         "gat_full",
         "gatv2_full",
         "gpgn",
@@ -405,7 +405,7 @@ def create_samplers(rng, train_lengths: List[int]):
 
             
             test_args = dict(
-                sizes=[-1],
+                sizes= [-1], # TODO: try to get tfds working (change from 3.10 to 3.9 python version)
                 split="test",
                 batch_size=32,
                 multiplier=2 * mult,
