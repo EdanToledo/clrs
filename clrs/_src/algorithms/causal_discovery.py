@@ -387,6 +387,7 @@ if __name__ == "__main__":
         size_results = {
             'A_scores': [],
             'arrows_scores': [],
+            'time_taken': [],
         }
         start_time = time.time()
         for i in range(500):
@@ -412,7 +413,12 @@ if __name__ == "__main__":
             # print(scm)
             df = scm.sample(60)
             (A, arrows_mat) = change_to_arrows_and_A(adjacency_mat)
+            start = time.time()
             (A_ic_star, arrows_mat_ic_star), _ = ic_star(df, adjacency_mat)
+            end = time.time()
+
+            t = end - start 
+            
             # print(A - A_ic_star)
             # print(arrows_mat - arrows_mat_ic_star)
 
@@ -426,6 +432,8 @@ if __name__ == "__main__":
 
             size_results['A_scores'].append(_mask_fn(A, A_ic_star))
             size_results['arrows_scores'].append(_eval_one(arrows_mat, arrows_mat_ic_star))
+            size_results['time_taken'].append(t)
+
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f'Elapsed time: {elapsed_time:.2f} seconds')
@@ -434,6 +442,7 @@ if __name__ == "__main__":
         results[str(size)] = {
                 'avg_A_score' : np.mean(size_results['A_scores']),
                 'avg_arrows_score': np.mean(size_results['arrows_scores']),
+                "avg_time_taken" : np.mean(size_results['time_taken'])
             }
         print(results)
     np.save("results_both_categorical_eval_one.npy", results)

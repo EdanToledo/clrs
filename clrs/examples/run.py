@@ -33,7 +33,7 @@ import tensorflow as tf
 flags.DEFINE_list("algorithms", ["ic_star"], "Which algorithms to run.")
 flags.DEFINE_list(
     "train_lengths",
-    ["3"],
+    ["4", "5", "6", "7", "8"],
     "Which training sizes to use. A size of -1 means " "use the benchmark dataset.",
 )
 flags.DEFINE_integer(
@@ -46,7 +46,7 @@ flags.DEFINE_integer(
     "A value of 0 means use always 1/4 of the length of "
     "the haystack (the default sampler behavior).",
 )
-flags.DEFINE_integer("seed", 42, "Random seed to set")
+flags.DEFINE_integer("seed", 1234, "Random seed to set")
 
 flags.DEFINE_boolean(
     "random_pos", False, "Randomize the pos input common to all algos."
@@ -130,17 +130,17 @@ flags.DEFINE_enum(
 )
 flags.DEFINE_enum(
     "processor_type",
-    "mpnn",
+    "deepsets",
     [
         "deepsets",
         "mpnn",
         "pgn",
+        "gatv2",
         "pgn_mask",
         "triplet_mpnn",
         "triplet_pgn",
         "triplet_pgn_mask",
         "gat",
-        "gatv2",
         "gat_full",
         "gatv2_full",
         "gpgn",
@@ -405,7 +405,7 @@ def create_samplers(rng, train_lengths: List[int]):
 
             
             test_args = dict(
-                sizes= [-1], # TODO: try to get tfds working (change from 3.10 to 3.9 python version)
+                sizes=[-1],
                 split="test",
                 batch_size=32,
                 multiplier=2 * mult,
